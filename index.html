@@ -1,0 +1,1662 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SABAP2 Pentad Field Card — South Africa</title>
+<style>
+  body{font-family:Georgia,serif;max-width:860px;margin:2rem auto;padding:0 1rem;background:#faf8f2;color:#2b2b2b}
+  h1{font-size:1.4rem;border-bottom:2px solid #8b6f47;padding-bottom:.3rem}
+  h2{font-size:1.1rem;color:#6f5738}
+  label{display:block;margin:.6rem 0 .2rem;font-weight:bold}
+  input,select,button{font-size:1rem;padding:.4rem}
+  button{background:#8b6f47;color:#fff;border:none;border-radius:4px;cursor:pointer}
+  button:hover{background:#6f5738}
+  button.stop{background:#a33}
+  button.minor{background:#999}
+  button.minor:hover{background:#777}
+  #pentad{font-family:monospace;font-size:1.2rem;color:#8b6f47;margin:.5rem 0}
+  #gpsline{font-size:.85rem;color:#555;font-family:monospace}
+  #tripline{font-size:.9rem;color:#4a7a3a;font-weight:bold}
+  table{border-collapse:collapse;width:100%;margin-top:1rem}
+  th,td{border:1px solid #ccc;padding:.35rem .5rem;text-align:left;vertical-align:top}
+  th{background:#eee6d8;position:sticky;top:0}
+  .bar{background:#8b6f47;height:.8em;display:inline-block;vertical-align:middle}
+  #status{color:#555;margin-top:.5rem;white-space:pre-wrap;font-family:monospace;font-size:.85rem}
+  small{color:#777}
+  fieldset{border:1px solid #ccc;margin-bottom:1rem}
+  td.desc{font-size:.9rem;color:#555}
+  td.size{white-space:nowrap;color:#555}
+  tr.seen td{background:#eef5ea}
+  tr.section td{background:#dcd4c4;font-weight:bold;font-size:.85rem;letter-spacing:.05em}
+  input[type=checkbox]{width:1.1rem;height:1.1rem;cursor:pointer}
+  #filters{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin:1rem 0}
+  #filters div{flex:1;min-width:200px}
+  #pentadcode,#pentadname,#tripname{font-family:monospace}
+  .saverow{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+  #triplist{margin-top:1rem}
+  #colpick{display:flex;gap:1.2rem;flex-wrap:wrap;align-items:center;margin:1rem 0;padding:.6rem .8rem;border:1px solid #ccc;background:#f3eee4}
+  #colpick label{display:inline-flex;align-items:center;gap:.3rem;margin:0;font-weight:normal;cursor:pointer}
+  #colpick label.off{color:#aaa;cursor:not-allowed}
+  #colpick .count{font-size:.85rem;color:#6f5738}
+</style>
+</head>
+<body>
+<h1>Pentad Field Card (SABAP2 — South Africa)</h1>
+
+<p>
+  <button id="gpsBtn" onclick="startGPS()">Use my location</button>
+  <button id="gpsStop" onclick="stopGPS()" class="stop" hidden>Stop GPS</button>
+  <span id="gpsline"></span>
+</p>
+
+<fieldset>
+  <legend>Trip list</legend>
+  <div class="saverow">
+    <input id="tripname" type="text" placeholder="Trip name, e.g. Garden Route June" size="28">
+    <button id="tripStartBtn" onclick="startTrip()">Start trip</button>
+    <button id="tripEndBtn" onclick="endTrip()" class="stop" hidden>End trip</button>
+  </div>
+  <div class="saverow" style="margin-top:.5rem">
+    <select id="tripsel" onchange="showTripButtons()" style="min-width:220px">
+      <option value="">— past trips —</option>
+    </select>
+    <button onclick="viewTrip()">View trip list</button>
+    <button onclick="exportTrip()">Download field card</button>
+    <button onclick="deleteTrip()" class="minor">Delete selected</button>
+  </div>
+  <div id="tripline"></div>
+  <small>While a trip is running, every bird ticked in any pentad is added to the trip list with the pentad it was seen in. Moving pentads never removes anything — the trip list is the total of all your ticks. "Download field card" produces a per-pentad summary you can transcribe when submitting cards on the SABAP2 site.</small>
+</fieldset>
+
+<fieldset>
+  <legend>My pentads — ones you have loaded and named</legend>
+  <div class="saverow">
+    <select id="mypentads" onchange="loadMyPentad()" style="min-width:260px">
+      <option value="">— choose a saved pentad —</option>
+    </select>
+    <button onclick="deleteMyPentad()" class="minor">Delete selected</button>
+  </div>
+  <div class="saverow" style="margin-top:.5rem">
+    <input id="pentadname" type="text" placeholder="Name this pentad, e.g. Home — George south" size="34">
+    <button onclick="saveCurrentPentad()">Save / rename current pentad</button>
+  </div>
+  <small>Any pentad you load manually is added here automatically under its code. Give it your own name with the box above.</small>
+</fieldset>
+
+<fieldset>
+  <legend>Pick a location</legend>
+  <label>Select a place</label>
+  <select id="place">
+    <option value="">— choose —</option>
+    <optgroup label="George / Garden Route">
+      <option value="-33.9583,22.4583">3355_2225 — George (central pentad)</option>
+      <option value="-33.9583,22.3750">3355_2220 — George west / Wilderness edge</option>
+      <option value="-33.9583,22.5417">3355_2230 — George east / Pacaltsdorp</option>
+      <option value="-34.0417,22.3750">3400_2220 — George Airport area</option>
+      <option value="-34.0417,22.4583">3400_2225 — Herolds Bay coast</option>
+      <option value="-34.0417,22.5417">3400_2230 — Victoria Bay / Touw mouth</option>
+      <option value="-33.8700,22.4400">3350_2225 — Outeniqua mountains north</option>
+      <option value="-33.9917,22.6583">3355_2235 — Wilderness / Touw River</option>
+      <option value="-34.1833,22.1417">3410_2205 — Mossel Bay</option>
+      <option value="-34.3417,21.8750">3420_2150 — Gouritz River mouth</option>
+    </optgroup>
+    <optgroup label="Western Cape">
+      <option value="-33.9250,18.4250">3355_1825 — Cape Town city centre</option>
+      <option value="-33.9333,18.4667">3355_1825 — Cape Town southern suburbs</option>
+      <option value="-33.8833,18.5083">3350_1830 — Milnerton / Table Bay</option>
+      <option value="-34.3583,18.4667">3420_1825 — Cape Point / Simon's Town</option>
+      <option value="-33.9333,18.8667">3355_1850 — Stellenbosch</option>
+      <option value="-33.7167,18.9667">3340_1855 — Paarl</option>
+      <option value="-32.1750,18.8833">3210_1850 — Clanwilliam</option>
+      <option value="-31.6667,18.5000">3140_1830 — Vredendal / Olifants River</option>
+      <option value="-34.8333,20.0000">3445_2000 — Cape Agulhas</option>
+      <option value="-34.4167,19.2333">3425_1910 — Hermanus</option>
+    </optgroup>
+    <optgroup label="Eastern Cape / Karoo">
+      <option value="-33.9583,25.6167">3355_2535 — Gqeberha (Port Elizabeth)</option>
+      <option value="-33.0167,27.9000">3300_2750 — East London</option>
+      <option value="-32.2500,24.5333">3215_2450 — Graaff-Reinet / Camdeboo</option>
+      <option value="-31.8667,24.5500">3150_2450 — Nieu-Bethesda</option>
+      <option value="-32.1583,25.6167">3205_2535 — Cradock / Mountain Zebra NP</option>
+      <option value="-33.7417,24.3417">3340_2420 — Baviaanskloof approach</option>
+    </optgroup>
+    <optgroup label="Northern Cape">
+      <option value="-28.7417,24.7583">2840_2445 — Kimberley</option>
+      <option value="-28.4500,21.2500">2825_2115 — Upington / Orange River</option>
+      <option value="-28.6000,16.5333">2835_1630 — Alexander Bay / Orange mouth</option>
+      <option value="-30.3167,17.2833">3015_1715 — Namaqualand coast / Hondeklipbaai</option>
+      <option value="-31.3833,19.1083">3120_1905 — Nieuwoudtville / bulb country</option>
+      <option value="-26.4667,20.6083">2625_2035 — Kgalagadi / Twee Rivieren</option>
+    </optgroup>
+    <optgroup label="Free State / North West">
+      <option value="-29.1083,26.2083">2905_2610 — Bloemfontein</option>
+      <option value="-28.5083,28.4167">2830_2825 — Golden Gate / Clarens</option>
+      <option value="-27.3583,30.1500">2720_3005 — Wakkerstroom (grassland birding)</option>
+      <option value="-25.3833,27.1333">2520_2705 — Pilanesberg</option>
+      <option value="-25.8500,25.6333">2550_2535 — Mahikeng / Ramatlabama</option>
+    </optgroup>
+    <optgroup label="Gauteng / Limpopo / Mpumalanga">
+      <option value="-25.7417,28.1917">2540_2810 — Pretoria (central)</option>
+      <option value="-26.1333,28.0500">2605_2800 — Johannesburg / Delta Park</option>
+      <option value="-26.1083,28.1083">2605_2805 — Sandton / Modderfontein</option>
+      <option value="-26.5167,28.2167">2630_2810 — Suikerbosrand</option>
+      <option value="-23.9000,29.4583">2350_2925 — Polokwane</option>
+      <option value="-23.8667,29.9917">2350_2955 — Magoebaskloof / Haenertsburg</option>
+      <option value="-24.9833,31.5833">2455_3135 — Kruger: Skukuza</option>
+      <option value="-24.3833,31.7333">2420_3140 — Kruger: Satara</option>
+      <option value="-25.1583,31.3667">2505_3120 — Kruger: Pretoriuskop</option>
+      <option value="-25.4750,30.9667">2525_3055 — Mbombela (Nelspruit)</option>
+      <option value="-25.4333,30.1167">2525_3005 — Dullstroom / Lakenvlei</option>
+      <option value="-24.7167,30.8000">2440_3045 — Blyde River / Bourke's Luck</option>
+      <option value="-22.1833,29.3833">2210_2920 — Mapungubwe / Limpopo River</option>
+    </optgroup>
+    <optgroup label="KwaZulu-Natal">
+      <option value="-29.8583,31.0250">2950_3100 — Durban / uMhlanga</option>
+      <option value="-29.6000,30.3833">2935_3020 — Pietermaritzburg</option>
+      <option value="-28.9583,29.2167">2855_2910 — uKhahlamba / Cathedral Peak</option>
+      <option value="-29.3750,30.2833">2920_3015 — Karkloof / Howick</option>
+      <option value="-28.3833,32.4167">2820_3225 — iSimangaliso / St Lucia</option>
+      <option value="-27.0500,32.8000">2700_3245 — iSimangaliso north / Kosi Bay</option>
+      <option value="-30.8083,30.3833">3045_3020 — Uvongo / south coast</option>
+      <option value="-27.6333,32.2667">2735_3215 — Mkhuze Game Reserve</option>
+    </optgroup>
+  </select>
+  <p><small>…or type coordinates (decimal degrees; South is negative, East is positive):</small></p>
+  <label>Latitude</label>
+  <input id="lat" type="number" step="0.0001" placeholder="-33.9583">
+  <label>Longitude</label>
+  <input id="lon" type="number" step="0.0001" placeholder="22.4583">
+  <p>
+    <button onclick="showPentad()">Get bird list</button>
+    <button onclick="clearTicks()">Clear ticks</button>
+  </p>
+  <p><small>…or load a pentad directly by its SABAP2 code:</small></p>
+  <div class="saverow">
+    <input id="pentadcode" type="text" placeholder="3355_2230" size="12">
+    <button onclick="loadPentadCode()">Load pentad code</button>
+  </div>
+</fieldset>
+
+<div id="pentad"></div>
+<div id="status"></div>
+
+<div id="filters" hidden>
+  <div>
+    <label for="typeSearch">Search by type</label>
+    <input id="typeSearch" type="text" placeholder="e.g. dove, swallow, heron…" oninput="renderTable()">
+    <small>Related groups included automatically (dove &rarr; pigeons, swallow &rarr; swifts &amp; martins).</small>
+  </div>
+  <div>
+    <label for="sizeFilter">Size</label>
+    <select id="sizeFilter" onchange="renderTable()">
+      <option value="">All sizes</option>
+      <option value="1">Very small — up to 15 cm</option>
+      <option value="2">Small — 15 to 20 cm</option>
+      <option value="3">Medium — 20 to 30 cm</option>
+      <option value="4">Large — 30 to 45 cm</option>
+      <option value="5">Very large — over 45 cm</option>
+    </select>
+  </div>
+</div>
+
+<div id="colpick" hidden>
+  <span style="font-weight:bold">Columns to show <span class="count" id="colcount"></span>:</span>
+  <label><input type="checkbox" data-col="size"> Size</label>
+  <label><input type="checkbox" data-col="marks"> Field marks</label>
+  <label><input type="checkbox" data-col="bill"> Bill</label>
+  <label><input type="checkbox" data-col="habitat"> Habitat</label>
+  <label><input type="checkbox" data-col="status"> Status</label>
+  <label><input type="checkbox" data-col="calls"> Calls</label>
+</div>
+
+<table id="tbl" hidden>
+  <thead><tr id="tblhead"></tr></thead>
+  <tbody></tbody>
+</table>
+
+<div id="triplist" hidden>
+  <h2>Trip list</h2>
+  <table>
+    <thead><tr><th>Species</th><th>Pentads seen in</th><th>Where</th><th>Best reporting rate</th><th>Field marks</th></tr></thead>
+    <tbody id="tripbody"></tbody>
+  </table>
+</div>
+
+<p><small>Pentad = the SABAP2 5&#8242; &times; 5&#8242; grid cell (about 9 &times; 9 km). With GPS on, the card follows you and reloads when you cross into a new pentad. Ticks, saved pentads, trips and column choices are stored per browser. Bill, habitat, status and call notes are typical for the species or its family — individual variation applies.</small></p>
+
+<script>
+const SA = { minLat:-35.35, maxLat:-22.05, minLon:16.35, maxLon:33.05 };
+
+let currentPentad = null;
+let currentRows = [];
+let seen = new Set();
+let gpsWatch = null;
+let loading = false;
+let activeTrip = null;   // name of the running trip, or null
+let missingNotesGlobal = [];   // species with no size/field-mark data in the current table
+
+// ---------- Synonym groups for the type search ----------
+const TYPE_GROUPS = {
+  "dove":    ["dove","pigeon"],
+  "pigeon":  ["dove","pigeon"],
+  "swallow": ["swallow","martin","swift"],
+  "swift":   ["swallow","martin","swift"],
+  "martin":  ["swallow","martin","swift"],
+  "eagle":   ["eagle","hawk-eagle","buzzard","harrier","kite","falcon","kestrel","osprey","goshawk","sparrowhawk","harrier-hawk","secretarybird"],
+  "hawk":    ["eagle","hawk-eagle","buzzard","harrier","kite","falcon","kestrel","osprey","goshawk","sparrowhawk","harrier-hawk"],
+  "raptor":  ["eagle","hawk-eagle","buzzard","harrier","kite","falcon","kestrel","osprey","goshawk","sparrowhawk","harrier-hawk","owl"],
+  "gull":    ["gull","tern"],
+  "tern":    ["gull","tern"],
+  "duck":    ["duck","teal","goose","pochard","shoveler"],
+  "goose":   ["duck","teal","goose","pochard","shoveler"],
+  "heron":   ["heron","egret","bittern"],
+  "egret":   ["heron","egret","bittern"],
+  "warbler": ["warbler","cisticola","apalis","prinia","camaroptera","eremomela","grassbird"],
+  "cisticola":["warbler","cisticola","apalis","prinia","camaroptera","eremomela","grassbird"],
+  "finch":   ["canary","siskin","seedeater","bunting","sparrow","waxbill","firefinch","mannikin","quelea"],
+  "canary":  ["canary","siskin","seedeater","bunting"],
+  "sparrow": ["sparrow","bunting"],
+  "starling":["starling"],
+  "weaver":  ["weaver","bishop","widowbird","whydah","quelea"],
+  "kingfisher":["kingfisher","bee-eater","roller","hoopoe"],
+  "wader":   ["plover","lapwing","sandpiper","stint","whimbrel","greenshank","stilt","avocet","oystercatcher","snipe","ruff","thick-knee","courser"],
+  "plover":  ["plover","lapwing"],
+  "owl":     ["owl","nightjar"],
+  "cuckoo":  ["cuckoo","coucal"],
+  "flycatcher":["flycatcher","chat","robin","robin-chat","batis"],
+  "chat":    ["chat","robin","robin-chat","stonechat"],
+  "sunbird": ["sunbird","sugarbird","white-eye"],
+  "crane":   ["crane","bustard"],
+  "rail":    ["rail","crake","flufftail","moorhen","gallinule","coot","swamphen"],
+  "crow":    ["crow","raven"]
+};
+
+// ---------- Field notes: [length in cm, diagnostic features] ----------
+const SPECIES_INFO = {
+"egyptian goose":["63","Large pale goose; dark brown eye-patch, chestnut wing patch"],
+"spur-winged goose":["100","Huge dark goose; knob at bill base, white wing window in flight"],
+"domestic goose":["75","Farmyard goose; variable white/grey plumage, orange bill"],
+"yellow-billed duck":["56","Dark duck; bright yellow bill, white wing bar"],
+"mallard":["56","Male green head, white neck ring; female mottled brown"],
+"cape shoveler":["51","Big spatula bill; pale blue shoulder patch"],
+"red-billed teal":["48","Dark cap, pale cheek; red bill"],
+"cape teal":["48","Pale grey duck; pink bill with black base"],
+"southern pochard":["49","All-dark diving duck; white eye in male"],
+"white-faced whistling duck":["48","Chestnut-and-white duck; white face, long grey bill"],
+"african black duck":["54","Dark river duck; white back bar in flight, orange-yellow bill"],
+"white-backed duck":["40","Small dark diving duck; white flanks when swimming low"],
+"little grebe":["26","Small dark waterbird; puffball rear, pale cheek spot"],
+"great crested grebe":["48","Long neck, double crest and ruff in breeding plumage"],
+"black-necked grebe":["30","Small grebe; uptilted bill, dark neck"],
+"white-breasted cormorant":["90","Large cormorant; white breast and throat"],
+"cape cormorant":["60","Glossy black; orange-yellow throat pouch, white flank patch"],
+"reed cormorant":["55","Dark cormorant; long tail, white throat in breeding"],
+"african darter":["80","Snake-necked; swims with body submerged, straight bill"],
+"african spoonbill":["90","All white; long spoon-shaped bill, red face and legs"],
+"hadeda ibis":["76","Dark olive ibis; white moustache stripe, loud 'ha-de-da' call"],
+"african sacred ibis":["68","White body, naked black head and neck, black wing tips"],
+"glossy ibis":["59","Dark chestnut with metallic green sheen; long curved bill"],
+"african openbill":["80","Dark stork; gap between mandibles for snail shells"],
+"grey heron":["95","Tall grey heron; white neck, black head stripe"],
+"black-headed heron":["85","Dark grey heron; black head and throat"],
+"goliath heron":["135","Very large chestnut-grey heron; heavy dagger bill"],
+"purple heron":["78","Slim reed heron; dark stripe down neck"],
+"black-crowned night heron":["60","Stocky; black cap and back, white-grey wings, red eye"],
+"great egret":["90","All-white; yellow bill, black legs and feet"],
+"yellow-billed egret":["65","All-white; yellow bill, black legs"],
+"intermediate egret":["65","All-white egret; gape line ends below eye"],
+"little egret":["60","All-white; black bill and legs, yellow feet"],
+"cattle egret":["50","White with buff crown and breast; feeds among stock"],
+"western cattle egret":["50","White with buff crown and breast; feeds among stock"],
+"little bittern":["33","Tiny bittern; buff wing patch, skulks in reeds"],
+"white stork":["112","White with black wing tips; red bill and legs"],
+"kelp gull":["58","Large gull; black back, white tail, yellow bill spot"],
+"hartlaub's gull":["36","Small grey-backed gull; white head, red bill and legs"],
+"grey-headed gull":["40","Medium gull; dark grey hood, red bill and legs"],
+"caspian tern":["50","Huge tern; massive red bill, black cap"],
+"greater crested tern":["48","Yellow bill, shaggy black crest"],
+"sandwich tern":["40","Black bill with yellow tip, shaggy crest"],
+"common tern":["35","Dark red bill with dark tip; grey underparts"],
+"cape gannet":["90","White with black wing tips; buff-yellow head, blue eye-ring"],
+"black-winged stilt":["36","Very long pink legs; black wings, white body"],
+"pied avocet":["43","Black and white; long upcurved bill"],
+"african oystercatcher":["45","All black; heavy red bill, pink legs, red eye-ring"],
+"blacksmith lapwing":["27","Black, white and grey; sharp spur at wrist, noisy"],
+"crowned lapwing":["26","Grey-brown; black breast band, white crown ring"],
+"black-winged lapwing":["28","Dark grey lapwing; black cap, white forehead"],
+"kittlitz's plover":["16","Pale plover; black line through eye, plain crown"],
+"three-banded plover":["18","Grey-brown; double black breast bands, red eye-ring"],
+"white-fronted plover":["17","Pale sandy plover; white forehead, dark chest band"],
+"common ringed plover":["17","Single black breast band; orange legs"],
+"grey plover":["28","Grey above; black armpit in flight, stout black bill"],
+"whimbrel":["43","Brown wader; long decurved bill, striped crown"],
+"eurasian whimbrel":["43","Brown wader; long decurved bill, striped crown"],
+"marsh sandpiper":["24","Delicate pale wader; fine straight bill, yellow-green legs"],
+"wood sandpiper":["20","Speckled brown; pale eyebrow, yellowish legs"],
+"common sandpiper":["19","Brown above, white below; bobs tail"],
+"common greenshank":["32","Large grey wader; long slightly upturned bill"],
+"little stint":["13","Tiny wader; straight fine black bill"],
+"curlew sandpiper":["20","Slightly decurved black bill; chestnut underparts in breeding"],
+"ruff":["26","Wader with variable plumage; males with head ruffs"],
+"african snipe":["28","Cryptic wader; very long straight bill, striped back"],
+"african rail":["29","Chestnut underparts; black-and-white barred flanks, red legs"],
+"black crake":["23","All black; yellow bill and legs, red eye"],
+"african crake":["23","Chestnut wings and flank bars; rarely seen"],
+"red-chested flufftail":["15","Tiny reed skulker; chestnut back spotted white, rufous breast"],
+"buff-spotted flufftail":["15","Tiny chestnut skulker; buff spots on back, heard not seen"],
+"purple swamphen":["45","Large blue-purple waterhen; red bill and shield"],
+"african swamphen":["45","Large blue-purple waterhen; red bill and shield"],
+"common moorhen":["33","Dark waterhen; red bill with yellow tip, white flank stripe"],
+"allen's gallinule":["26","Green-backed waterhen; red bill with blue shield, red legs"],
+"red-knobbed coot":["39","All-black waterbird; two red knobs on white frontal shield"],
+"black-shouldered kite":["30","Pale grey; black shoulders, red eye, hovers"],
+"black-winged kite":["30","Pale grey; black shoulders, red eye, hovers"],
+"yellow-billed kite":["55","Fork-tailed raptor; all-dark, yellow bill"],
+"black kite":["55","Forked tail, dark brown"],
+"african fish eagle":["63","White head and breast, chestnut belly; pure black wings"],
+"verreaux's eagle":["85","All black; white V on back, feathered legs"],
+"booted eagle":["50","Small eagle; pale flight feathers, feathered legs"],
+"crowned eagle":["80","Massive legs; barred chestnut underparts, crested head"],
+"african crowned eagle":["80","Massive legs; barred chestnut underparts, crested head"],
+"martial eagle":["78","Enormous; black breast patch, white underparts"],
+"long-crested eagle":["53","Slender; long shaggy black crest, white leg feathers"],
+"african hawk-eagle":["60","Dark back, white underparts barred black"],
+"black harrier":["50","Striking black harrier; white band across tail and rump"],
+"african marsh harrier":["46","Dark brown harrier; pale crown patch"],
+"jackal buzzard":["55","Chestnut tail; black and rufous underwing"],
+"steppe buzzard":["51","Variable brown buzzard; pale window at primaries"],
+"common buzzard":["51","Variable brown buzzard; pale window at primaries"],
+"forest buzzard":["48","Dark-eyed buzzard of afromontane forest; pale head"],
+"western osprey":["55","Fish-eater of coasts and rivers; white crown, dark eye-stripe"],
+"peregrine falcon":["40","Sleek dark falcon; black moustache, fast stoop"],
+"lanner falcon":["45","Large pale-crowned falcon; rufous vent, long tail"],
+"rock kestrel":["34","Small falcon; rufous back, grey cheek, hovers"],
+"amur falcon":["30","Small grey migratory falcon; orange legs"],
+"lesser kestrel":["31","Small blue-grey falcon; rufous back, white claws"],
+"african harrier-hawk":["62","Gymnogene; bare yellow face, double-jointed knees"],
+"black sparrowhawk":["55","All-dark forest goshawk; white breast in some morphs"],
+"little sparrowhawk":["25","Tiny dark hawk; white vent, rufous flank patch"],
+"rufous-breasted sparrowhawk":["36","Small barred-breasted hawk; rufous breast, yellow eyes"],
+"african goshawk":["45","Forest hawk; grey back, barred whitish underparts"],
+"african cuckoo-hawk":["42","Banded underparts, short crest; two white brows"],
+"spotted eagle-owl":["45","Large ear-tufted owl; yellow eyes, speckled breast"],
+"western barn owl":["34","Ghostly pale; white heart-shaped face, dark eyes"],
+"barn owl":["34","Ghostly pale; white heart-shaped face, dark eyes"],
+"african wood owl":["30","Forest owl; dark eyes, no ear tufts"],
+"african grass owl":["36","Round white face, dark brown body; skulks in grass"],
+"marsh owl":["35","Dark owl; round pale-rimmed face, short ear tufts"],
+"spotted thick-knee":["54","Large brown nightbird; big yellow eye"],
+"water thick-knee":["40","Grey-brown thick-knee; bold white wing bar"],
+"fiery-necked nightjar":["24","Grey-brown nightjar; rufous collar"],
+"european nightjar":["26","Mottled grey nightjar; long-winged migrant"],
+"rock dove":["33","Blue-grey city pigeon; dark wing bars, white rump"],
+"rock pigeon":["33","Blue-grey city pigeon; dark wing bars, white rump"],
+"speckled pigeon":["31","Grey; maroon back, red skin around eye"],
+"red-eyed dove":["31","Large grey-brown dove; dark red eye, pink-grey head"],
+"ring-necked dove":["26","Grey-pink; black half-collar on hindneck"],
+"cape turtle dove":["26","Grey-pink; black half-collar on hindneck"],
+"laughing dove":["24","Small pink-brown dove; speckled black neck bib"],
+"emerald-spotted wood dove":["24","Small grey dove; iridescent green wing spots"],
+"tambourine dove":["22","Dark-backed, white-breasted small dove"],
+"lemon dove":["24","Chestnut-backed forest dove; white face, green bill base"],
+"namaqua dove":["22","Tiny long-tailed dove; black-and-chestnut male face"],
+"african olive pigeon":["40","Large dark forest pigeon; white neck speckles, maroon back"],
+"knysna turaco":["45","Large green forest turaco; crimson underwings, blue-white eye patch"],
+"livingstone's turaco":["45","Green crested forest bird; crimson underwings"],
+"red-chested cuckoo":["31","Slate-grey above, rufous breast; 'piet-my-vrou' call"],
+"black cuckoo":["30","All-dark cuckoo; 'qulick-qulick' call"],
+"jacobin cuckoo":["28","Black-and-white cuckoo; long graduated tail"],
+"diederik cuckoo":["19","Glossy green cuckoo; white underparts, red eye"],
+"klaas's cuckoo":["18","Glossy green cuckoo; pure white underparts"],
+"levaillant's cuckoo":["34","Heavily barred long cuckoo; white eyebrow"],
+"african emerald cuckoo":["23","Male green above, yellow barred below"],
+"burchell's coucal":["42","Rufous-backed coucal; white underparts, 'rainbird' call"],
+"narina trogon":["33","Green above, red below; white eye-ring"],
+"european roller":["30","Turquoise-blue roller; tumbling display"],
+"giant kingfisher":["45","Huge kingfisher; male chestnut breast, female white-spotted"],
+"pied kingfisher":["20","Black-and-white; shaggy crest, hovers over water"],
+"brown-hooded kingfisher":["22","Brown head, chestnut breast; blue back, red bill"],
+"half-collared kingfisher":["17","Blue-backed forest stream kingfisher; white throat patch"],
+"malachite kingfisher":["14","Tiny cobalt-blue kingfisher; rufous belly, red bill"],
+"grey-headed kingfisher":["21","Chestnut belly, blue wings and tail"],
+"european bee-eater":["27","Golden-green with blue tail; yellow throat"],
+"white-fronted bee-eater":["24","Green-backed; white forehead, red throat"],
+"african black swift":["45","Large all-dark swift; forked tail, white throat patch"],
+"little swift":["15","Small dark swift; white rump band, square tail"],
+"white-rumped swift":["15","Forked-tailed swift; narrow white rump, throat collar"],
+"alpine swift":["22","Big swift; white belly patch, dark breast band"],
+"african palm swift":["16","Slim pale swift; long narrow wings"],
+"horus swift":["13","Small pale-rumped swift; square tail"],
+"barn swallow":["18","Steel-blue above; deep-forked tail, red throat"],
+"white-throated swallow":["17","Blue swallow; white throat, forked tail"],
+"greater striped swallow":["20","Rufous cap; bold white stripes on back"],
+"lesser striped swallow":["18","Rufous cap; white stripes, chestnut underparts"],
+"pearl-breasted swallow":["14","Pale blue swallow; pearl-white underparts"],
+"wire-tailed swallow":["17","Blue swallow; chestnut cap, wire tail streamers"],
+"rock martin":["15","Brown martin; pale throat, square tail"],
+"brown-throated martin":["14","Grey-brown martin; white underparts, brown breast band"],
+"common house martin":["14","Blue-black above; pure white rump"],
+"black saw-wing":["17","All-dark swallow with saw-edged wing; forest edges"],
+"helmeted guineafowl":["60","Blue-grey, white-spotted; bony helmet, red wattle"],
+"cape spurfowl":["40","Dark brown francolin; chestnut wings, red bill and legs"],
+"red-necked spurfowl":["38","Dark francolin; red bill, legs and bare neck patch"],
+"common quail":["17","Small streaked gamebird; hidden in grass"],
+"harlequin quail":["25","Male with black-and-white face mask"],
+"denham's bustard":["100","Large pale-necked bustard"],
+"blue crane":["120","Pale blue-grey crane; white crown, bustle wings"],
+"bronze-winged courser":["24","Nocturnal courser; bronze wing panel, white belly"],
+"indian peafowl":["85","Feral; male with huge iridescent train"],
+"secretarybird":["150","Long-legged eagle on stilts; black crest quills"],
+"black-collared barbet":["19","Red-headed barbet with black collar; duetting"],
+"red-fronted tinkerbird":["11","Tiny barbet; yellow forehead, striped sides"],
+"scaly-throated honeyguide":["20","Dark olive honeyguide; scaly throat, forest canopy"],
+"lesser honeyguide":["15","Small olive-backed honeyguide; pale bill"],
+"greater honeyguide":["19","Olive-backed honeyguide; white outer tail, pink bill"],
+"brown-backed honeybird":["14","Plain brown honeyguide; slender dark bill"],
+"african hoopoe":["28","Chestnut with banded wings and tail; long curved bill"],
+"green wood hoopoe":["34","Iridescent green-blue; long red decurved bill"],
+"scimitarbill":["25","Dark glossy bird; slender decurved bill"],
+"knysna woodpecker":["21","Golden woodpecker; spotted breast, SA endemic"],
+"golden-tailed woodpecker":["22","Golden-green back; spotted underparts"],
+"cardinal woodpecker":["14","Small barred woodpecker; red crown in male"],
+"olive woodpecker":["20","Dark olive woodpecker; red rump and crown"],
+"ground woodpecker":["23","Grey woodpecker of rocky slopes; pink belly"],
+"fork-tailed drongo":["25","All-black; deep forked tail, red eye, mimic"],
+"southern boubou":["22","Black above, white-tipped tail; chestnut belly, duets"],
+"black-backed puffback":["17","Sleek grey-and-black; white eye, puffball display"],
+"brown-crowned tchagra":["19","Black-and-white striped head, rufous wings"],
+"southern tchagra":["21","Rufous wings; bold black-and-white head stripes"],
+"olive bushshrike":["20","Olive-green with orange breast; white eyebrow"],
+"grey-headed bushshrike":["20","Grey head; yellow underparts, black breast band"],
+"orange-breasted bushshrike":["22","Grey head, orange breast; white eyebrow"],
+"southern fiscal":["23","Black-and-white; hooked bill, white V on back"],
+"fiscal shrike":["23","Black-and-white; hooked bill, impales prey"],
+"fiscal flycatcher":["15","Black-and-white; white wing bar, long tail"],
+"cape batis":["13","Black-capped; white eyebrow, chestnut wing stripe"],
+"chin-spot batis":["13","Grey batis; white chin spot in male"],
+"black cuckooshrike":["24","All-slate male; orange eye; female barred"],
+"grey cuckooshrike":["23","Plain slate-grey forest bird; pale eye"],
+"black-headed oriole":["24","Brilliant yellow; black head, pink bill"],
+"bokmakierie":["23","Yellow belly with black necklace, duet calls"],
+"cape robin-chat":["18","Grey-brown; white eyebrow, orange throat to vent"],
+"chorister robin-chat":["22","Dark forest robin; slate head, orange belly, mimic"],
+"white-browed robin-chat":["18","Olive back; orange breast, white supercilium"],
+"white-starred robin":["16","White forehead star, orange breast"],
+"karoo scrub robin":["17","White-tipped dark tail, upright stance"],
+"familiar chat":["16","Grey-brown; white rump patch, tail-cocking"],
+"african stonechat":["15","Male black head, white neck patches, chestnut breast"],
+"mocking cliff-chat":["20","Slate male with white wing patch; chestnut vent"],
+"cape rock-thrush":["22","Blue-grey head and breast, chestnut back and belly"],
+"olive thrush":["22","Dark olive-brown; spotted breast, orange bill"],
+"karoo thrush":["24","Grey-brown; orange bill and eye-ring"],
+"groundscraper thrush":["23","Bold black crescent breast spots"],
+"cape wagtail":["18","Grey-brown wagtail; black breast band, wagging"],
+"african pied wagtail":["20","Black-and-white wagtail; black breast patch"],
+"mountain wagtail":["18","Long-tailed grey wagtail of forest streams"],
+"african pipit":["17","Streaked brown pipit; white outer tail feathers"],
+"plain-backed pipit":["17","Unstreaked buff-brown pipit; plain back"],
+"nicholson's pipit":["19","Large rocky-slope pipit; bold eyebrow"],
+"long-billed pipit":["17","Large pale pipit; long bill"],
+"cape longclaw":["19","Orange throat with black collar"],
+"lesser swamp warbler":["16","Reed warbler; long white eyebrow"],
+"little rush warbler":["13","Small dark reed skulker; pale supercilium"],
+"african reed warbler":["13","Olive-brown reed warbler; skulks in reeds"],
+"common reed warbler":["13","Migrant reed warbler; pale throat, pointed bill"],
+"marsh warbler":["13","Olive migrant warbler; white eye-ring"],
+"willow warbler":["11","Small greenish migrant; pale eyebrow, thin dark bill"],
+"yellow-throated woodland warbler":["13","Yellow throat and breast; olive back"],
+"bar-throated apalis":["13","Grey-backed; black breast band, long tail, white eye-ring"],
+"green-backed camaroptera":["11","Small olive-grey warbler; cocked tail"],
+"yellow-bellied eremomela":["10","Tiny grey warbler; yellow belly"],
+"karoo prinia":["13","Streaked-backed prinia; long tail with white tips"],
+"tawny-flanked prinia":["12","Pale warbler; buff flanks, long fanned tail"],
+"cloud cisticola":["12","Tiny streaked cisticola; display flight"],
+"levaillant's cisticola":["15","Streaked cisticola of vleis; rufous wing panel"],
+"croaking cisticola":["13","Large dark-streaked cisticola; croaking display"],
+"rattling cisticola":["13","Grey-brown; rattling trill from bush tops"],
+"zitting cisticola":["11","Tiny; 'zitting' display like a cricket"],
+"wailing cisticola":["13","Streaked fynbos cisticola; wailing song"],
+"grey-backed cisticola":["13","Rufous-tinged fynbos cisticola; grey back"],
+"neddicky":["11","Plain grey-brown; monotonous ticking song"],
+"victorin's warbler":["15","Fynbos endemic; grey face, chestnut breast"],
+"cape grassbird":["19","Streaked yellow-throated; long graduated tail"],
+"knysna warbler":["15","Skulking forest warbler; loud 'krrrr' trill"],
+"african dusky flycatcher":["14","Small grey-brown; pale eye-ring, upright on twigs"],
+"dusky flycatcher":["14","Small grey-brown; pale eye-ring"],
+"spotted flycatcher":["14","Grey-brown migrant; streaked crown and breast"],
+"ashy flycatcher":["14","Grey forest flycatcher; pale underparts"],
+"african paradise flycatcher":["16","Male with very long white tail streamers"],
+"blue-mantled crested flycatcher":["12","Blue-grey forest flycatcher; crest"],
+"greater double-collared sunbird":["15","Huge red breast band with narrow blue collar"],
+"southern double-collared sunbird":["12","Red breast band, green head, yellow pectoral tufts"],
+"malachite sunbird":["14","Male all metallic green; long curved black bill"],
+"amethyst sunbird":["15","Glossy green-black; amethyst shoulder patches"],
+"collared sunbird":["11","Green head, purple collar, yellow belly"],
+"grey sunbird":["15","Plain grey sunbird; dull yellow belly"],
+"orange-breasted sunbird":["15","Fynbos endemic; blue head, orange breast"],
+"cape sugarbird":["38","Fynbos endemic; long tail in male, curved bill"],
+"cape white-eye":["13","Pale green-yellow; bold white eye-ring"],
+"sombre greenbul":["23","Plain olive-green forest bird; pale eye"],
+"terrestrial brownbul":["20","Dull brown forest-floor skulker; speckled throat"],
+"cape bulbul":["21","Dull brown; white eye-ring, yellow undertail"],
+"common starling":["21","Glossy dark migrant; yellow bill"],
+"red-winged starling":["24","Dark; chestnut flight feathers, red eye"],
+"pale-winged starling":["24","Rocky slopes; chestnut wing panel, pale eye"],
+"black-bellied starling":["24","Glossy green-black; dark belly, white eye"],
+"house sparrow":["16","Grey crown, black bib and bill"],
+"cape sparrow":["16","Black head and breast patch; chestnut nape"],
+"southern grey-headed sparrow":["16","Grey head; white wing bar, pale bill"],
+"cape weaver":["18","Yellow weaver; orange face wash"],
+"southern masked weaver":["17","Yellow and black; black face mask, red eye"],
+"village weaver":["17","Streaked-backed yellow weaver; red eye"],
+"spectacled weaver":["15","Yellow; black throat line, pale eye"],
+"dark-backed weaver":["20","Forest weaver; black-and-yellow barred back"],
+"thick-billed weaver":["18","Dark chocolate; massive pale bill"],
+"southern red bishop":["13","Male scarlet-and-black; female streaked"],
+"yellow bishop":["16","Male black-and-yellow; broad tail"],
+"red-collared widowbird":["15","Male black with red collar; long tail"],
+"long-tailed widowbird":["16","Male black with orange shoulders; long drooping tail"],
+"pin-tailed whydah":["13","Male black-and-white with long tail streamers"],
+"shaft-tailed whydah":["13","Black-and-pink; wire-like tail feathers"],
+"common waxbill":["12","Grey-pink; crimson eye-stripe, barred flanks"],
+"blue waxbill":["13","Pale blue head and breast; pink belly"],
+"swee waxbill":["12","Grey head, chestnut vent; black-and-white flanks"],
+"red-billed firefinch":["11","All-red with white spots; female dull brown"],
+"african firefinch":["11","Dark red; slate head, white spots"],
+"bronze mannikin":["12","Small dark finch; white flank bars"],
+"black-and-white mannikin":["12","Bold white flank bars and rump"],
+"forest canary":["13","Yellow-bellied forest canary; dark head"],
+"cape canary":["13","Grey-headed; yellow rump and breast"],
+"brimstone canary":["15","Large all-yellow; heavy dark bill"],
+"yellow canary":["14","All-yellow; plain face"],
+"white-throated canary":["15","Large grey; white throat, heavy pale bill"],
+"black-headed canary":["14","Grey with black head; yellow shoulder patch"],
+"cape siskin":["13","Grey fynbos siskin; yellow rump, white wing bars"],
+"protea seedeater":["15","Fynbos endemic; grey head, heavy bill"],
+"streaky-headed seedeater":["16","Bold pale eyebrow, streaked crown"],
+"cape bunting":["16","Chestnut wings; bold striped head"],
+"cinnamon-breasted bunting":["15","Chestnut breast band; striped head"],
+"lark-like bunting":["15","Sandy streaked; sparrow-like"],
+"red-billed quelea":["12","Tiny; red bill, breeding male black mask"],
+"cuckoo finch":["13","Sparrow-like yellow finch; brood-parasitic"],
+"burchell's courser":["25","Pale courser; blue-grey legs"],
+"african penguin":["60","Black-and-white; black breast band, pink eye gland"],
+"pied crow":["46","Black-and-white crow; white breast and collar"],
+"cape crow":["48","All-black slender crow; glossy sheen"],
+"white-necked raven":["50","Large raven; deep bill, wedge tail"],
+"speckled mousebird":["35","Grey-brown crested; long tail, red legs"],
+"white-backed mousebird":["34","Pale; white back patch"],
+"red-faced mousebird":["34","Pale; bare red face patch"],
+"hamerkop":["56","Brown, hammer-headed crest; huge stick nest"],
+"red-capped lark":["15","Rufous-capped lark of open ground"]
+};
+
+const GROUP_INFO = {
+"sunbird":["12–15","Curve-billed nectar feeder; males iridescent"],
+"canary":["12–15","Seed-eating finch; check rump, eyebrow and bill colour"],
+"cisticola":["11–15","Tiny streaked warbler; best told by song and display flight"],
+"warbler":["13–19","Skulking insect-eater; note habitat and eyebrow pattern"],
+"swift":["13–45","Aerial bird; note size, tail fork and white patches"],
+"swallow":["14–20","Agile flyer; note breast band, rump and throat colour"],
+"martin":["12–15","Square-tailed aerial feeder; check rump and throat"],
+"dove":["22–40","Plump ground-feeding pigeon; note collars and eye colour"],
+"pigeon":["24–40","Larger pigeon; check back colour and eye skin"],
+"heron":["45–135","Long-legged dagger-billed wader; note size and neck"],
+"egret":["50–90","White heron; bill and leg colour are key"],
+"cormorant":["55–90","Dark swimming diver; check breast patch"],
+"gull":["36–58","Coastal scavenger; check back shade and bill"],
+"tern":["35–50","Sleek sea bird; bill colour and cap are diagnostic"],
+"eagle":["50–85","Large soaring raptor; note silhouette and underwing"],
+"buzzard":["48–55","Broad-winged hawk; check tail and underwing"],
+"harrier":["46–50","Long-winged low-flying hawk; owl-like facial disc"],
+"falcon":["30–45","Sleek pointed-winged hunter; note moustache marks"],
+"sparrowhawk":["25–55","Short-winged woodland hawk; note size and barring"],
+"goshawk":["45","Broad-winged forest hawk; grey back, barred underparts"],
+"kingfisher":["14–45","Big-headed; dagger bill; check breast and back"],
+"woodpecker":["14–23","Climbs trunks; check crown and breast pattern"],
+"plover":["16–28","Short-billed wader; breast bands and leg colour"],
+"sandpiper":["19–55","Long-billed wader; note bill length and curve"],
+"duck":["40–63","Waterfowl; check bill colour and wing patches"],
+"teal":["48","Small dabbling duck; check bill and face"],
+"starling":["21–26","Stout-billed sociable bird; note iridescence"],
+"weaver":["15–20","Strong-billed seed-eater; breeding males bright"],
+"owl":["30–45","Nocturnal raptor; facial disc, eye colour"],
+"nightjar":["24–26","Cryptic night bird; white patches in flight"],
+"lapwing":["26–28","Long-legged wader with spurs at wrist"],
+"flycatcher":["12–16","Insect-snapper from a perch; check eyebrow and tail"],
+"robin-chat":["18–22","Orange-bellied skulker; flicks tail"],
+"robin":["16","Small forest bird; check forehead and breast"],
+"pipit":["15–19","Streaked ground bird; walks, rarely perches"],
+"thick-knee":["40–54","Camouflaged large-eyed night bird"],
+"apalis":["13","Slender long-tailed warbler of undergrowth"],
+"prinia":["12–13","Long-tailed warbler; often cocked tail"],
+"waxbill":["12–13","Tiny seed-eating finch near water"],
+"bishop":["13–16","Breeding males red-and-black or yellow-and-black"],
+"whydah":["13","Males grow long tail streamers"],
+"seedeater":["15–16","Streaked finch; heavy bill"],
+"bunting":["15–16","Seed-eater with striped head"],
+"bulbul":["20–23","Sleek fruit-eater; check eye-ring and vent"],
+"greenbul":["20–23","Plain green-tinged forest bird"],
+"barbet":["11–19","Thick-billed woodland bird; face pattern"],
+"coucal":["42","Long-tailed thicket skulker; rufous back"],
+"turaco":["45","Crested green forest bird; crimson underwings"],
+"goose":["63–100","Large waterfowl; check bill and wing pattern"],
+"stork":["80–112","Long-legged wader; check bill and belly"],
+"crane":["120","Tall wader; check crown and neck colours"],
+"sparrow":["16","Stocky seed-eater; head pattern, wing bar"],
+"raven":["50","Large black corvid; bill shape"],
+"crow":["46–48","Black or black-and-white corvid"],
+"mousebird":["34–35","Long-tailed acrobat; hangs upside down"],
+"honeyguide":["14–20","Olive bird; check bill and outer tail"],
+"honeybird":["14","Small plain honeyguide of forest"],
+"flufftail":["15","Tiny reed-bed skulker; heard not seen"],
+"grebe":["26–48","Diving waterbird; bill shape and crest"],
+"chat":["15–20","Thrush-relative; check rump and tail habits"],
+"trogon":["33","Green-and-red forest bird; sits motionless"],
+"courser":["24","Long-legged runner of open ground"],
+"lark":["15","Ground bird; check cap and breast streaking"],
+"boubou":["22","Black-and-chestnut duetting bush bird"],
+"tchagra":["19–21","Rufous-winged bush shrike; striped head"],
+"gallinule":["26–33","Waterhen with bright bill and shield"],
+"bittern":["33","Reed-bed heron; freezes with bill up"],
+"longclaw":["19","Grass pipit with orange throat"],
+"grassbird":["19","Streaked wetland warbler; long tail"],
+"bustard":["100","Large ground bird"],
+"quail":["17","Tiny gamebird; flushes suddenly"],
+"rail":["29","Slender reed-bed bird; barred flanks"],
+"spurfowl":["38–40","Dark francolin; leg colour, neck streaking"],
+"greenshank":["32","Large pale wader; upturned bill"],
+"openbill":["80","Dark stork; gap in the bill"],
+"osprey":["55","Fish-eating raptor; white crown"],
+"shoveler":["51","Duck with huge spatula bill"],
+"snipe":["28","Cryptic wader; very long straight bill"],
+"crake":["23","Small secretive reed-bed rail"],
+"widowbird":["15–16","Breeding males black with long tails"],
+"mannikin":["12","Small dark finch"],
+"quelea":["12","Tiny weaver-relative; huge flocks"],
+"stint":["13","Tiny pale wader"],
+"ibis":["59–76","Long decurved bill; check body colour"],
+"stilt":["36","Very long-legged wader"],
+"avocet":["43","Black-and-white; upcurved bill"],
+"siskin":["13","Small finch; check rump and wing bars"]
+};
+
+// ---------- Extra columns: [bill shape, habitat, status, calls] ----------
+// Species-level entries first; GROUP_EXTRA provides family-typical fallbacks.
+const EXTRA_INFO = {
+"egyptian goose":["short goose bill","lakes, dams, park water","resident, local movements","honking and hissing"],
+"spur-winged goose":["short heavy bill","wetlands, floodplains","resident","thin wheezy hiss"],
+"yellow-billed duck":["flat yellow bill","lakes, rivers, estuaries","resident","quacking series"],
+"mallard":["flat bill","urban ponds","feral resident","rasping quack"],
+"cape shoveler":["huge spatula bill","shallow nutrient-rich waters","near-endemic resident","nasal thwaa calls"],
+"red-billed teal":["small dark bill with red base","open freshwater","resident","whistled swiisss"],
+"cape teal":["short pink bill","shallow coastal and inland waters","near-endemic resident","soft chattering"],
+"southern pochard":["short grey bill","deep freshwater lakes","resident","quiet; low croaks"],
+"white-faced whistling duck":["slim grey bill","shallow pans and floodplains","resident, wanders","clear whistled wheet-wheeo"],
+"african black duck":["dusky yellow bill","fast clear rivers and streams","resident","high whistle in flight"],
+"little grebe":["short pointed bill","small ponds and dams","resident","trilling whinny"],
+"great crested grebe":["long pointed bill","large open waters","resident","growling bark"],
+"white-breasted cormorant":["hooked fish bill","lakes, coasts, large rivers","resident","deep grunts at colony"],
+"cape cormorant":["slim hooked bill","inshore coastal waters","near-endemic, locally common","nasal grunts in flocks"],
+"reed cormorant":["slim hooked bill","quiet fresh water, reed edges","resident","low croaks"],
+"african darter":["straight dagger bill with fine hook","calm water with perches","resident","harsh croaks at nest"],
+"african spoonbill":["long spoon-shaped bill","shallow wetlands, estuaries","resident","quiet grunting"],
+"hadeda ibis":["long decurved bill","parks, lawns, wetlands","resident, expanding","loud ringing ha-de-da-da"],
+"african sacred ibis":["long decurved bill","wetlands, fields, tips","resident","croaky calls at roosts"],
+"glossy ibis":["slender decurved bill","shallow marshes","resident and nomadic","soft grunting"],
+"grey heron":["long yellow dagger bill","estuaries, dams, grassland","resident","harsh fraaank in flight"],
+"black-headed heron":["heavy dark dagger bill","grassland, pastures, roadsides","resident, common","croaking kraank"],
+"goliath heron":["massive dagger bill","large rivers, lakes, estuaries","resident","deep rasping croaks"],
+"purple heron":["slim yellow dagger bill","dense reedbeds","resident","harsh frarnk"],
+"black-crowned night heron":["short sturdy bill","reeded waters, roosts","resident","squawking kwok at night"],
+"great egret":["long yellow dagger bill","shallow wetlands","resident","harsh croaks"],
+"yellow-billed egret":["slim yellow bill with black tip","shallow waters","resident, local","quiet croaks"],
+"little egret":["thin black dagger bill","estuaries, dams, mudflats","resident","rasping calls"],
+"cattle egret":["short yellowish bill","pastures, lawns, with stock","resident, highly mobile","bubbling cack-colonck"],
+"white stork":["long red bill","grassland, cultivated fields","Palearctic migrant (Oct–Mar)","bill-clattering at nest"],
+"kelp gull":["heavy yellow-tipped bill","coasts, harbours, tips","resident","loud kee-ow and laughing"],
+"hartlaub's gull":["slim red bill","coastal towns and bays","near-endemic resident","shrill keening"],
+"grey-headed gull":["red bill","coastal and inland waters","resident","noisy screaming"],
+"caspian tern":["heavy red coral bill","estuaries, coastal lagoons","resident and wanderer","deep rasping krau"],
+"greater crested tern":["slim yellow bill","coastal waters and estuaries","resident","harsh grating calls"],
+"sandwich tern":["black bill with yellow tip","coastal waters","resident and migrant","harsh kirrik"],
+"common tern":["dark red bill","coast, estuaries","Palearctic migrant (Nov–Apr)","rasping kyar"],
+"cape gannet":["slim pointed bill","offshore waters, breeding colonies","near-endemic, Vulnerable","loud rattling at colony"],
+"black-winged stilt":["fine straight black bill","shallow pans, sewage works","resident","sharp kek-kek-kek"],
+"pied avocet":["long upcurved black bill","shallow brackish waters","resident","nasal kluit"],
+"african oystercatcher":["stout red chisel bill","rocky and sandy coasts","near-endemic resident, Near-threatened","loud peeping piip-piip"],
+"blacksmith lapwing":["short black-tipped bill","wetland edges, lawns","resident, common","metallic tink-tink-tink"],
+"crowned lapwing":["short bill","open short grass, sports fields","resident","harsh kreet-kreet"],
+"three-banded plover":["short bill with pink base","freshwater edges","resident","chip-chip calls"],
+"white-fronted plover":["short dark bill","sandy coasts and river mouths","resident","soft trilled chips"],
+"grey plover":["stout short black bill","estuaries, mudflats","Palearctic migrant (Sep–Apr)","plaintive too-ee in flight"],
+"whimbrel":["long decurved bill","estuaries, mudflats","Palearctic migrant (Sep–Apr)","rippling trilled call"],
+"marsh sandpiper":["fine straight bill","shallow wetlands","Palearctic migrant (Sep–Apr)","high trilled chwee-chwee"],
+"wood sandpiper":["medium straight bill","freshwater margins","Palearctic migrant (Sep–Apr)","quick pit-chiff in flight"],
+"common sandpiper":["medium straight bill","rivers, dams, coasts","Palearctic migrant (Sep–Apr)","high ringing tsee-wee-wee"],
+"common greenshank":["long upturned bill","estuaries, inland waters","Palearctic migrant (Sep–Apr)","loud chew-chew-chew"],
+"little stint":["tiny straight black bill","mudflats and shorelines","Palearctic migrant (Nov–Mar)","hard tit-tit calls"],
+"curlew sandpiper":["slightly decurved black bill","mudflats, estuaries","Palearctic migrant (Sep–Apr)","soft trilling chirrup"],
+"african snipe":["very long straight bill","marshes, vleis, damp grass","resident, endemic to region","rough ka-ka at dusk; winnowing display"],
+"african rail":["moderate decurved bill","dense reedbeds and thickets","resident","repeated krrak calls"],
+"black crake":["stout yellow-red bill","reed margins, floating vegetation","resident","dry gronk notes"],
+"purple swamphen":["heavy red bill with shield","reedbeds, lakes","resident","rasping keeyow"],
+"common moorhen":["red-and-yellow bill","ponds, dams with vegetation","resident","loud kurrrek"],
+"red-knobbed coot":["white bill and shield","lakes, dams, sewage ponds","resident, common","trumpeted krook"],
+"black-shouldered kite":["short hooked black bill","open grassland, road verges","resident, common","clear wheezy chee"],
+"yellow-billed kite":["strong yellow bill","towns, wetlands, roadsides","Palearctic migrant (Aug–Mar)","high carrying kweea"],
+"african fish eagle":["heavy yellow cere and bill","lakes, rivers, estuaries","resident","far-carrying duet weeeah-hyo-hyo"],
+"jackal buzzard":["strong yellow-based bill","mountains, open country","near-endemic resident","mewing kaaa-haa"],
+"steppe buzzard":["yellow cere, hooked bill","open country, perches on poles","Palearctic migrant (Oct–Mar)","thin peee-lu"],
+"forest buzzard":["yellow cere, hooked bill","afromontane forest and edges","near-endemic resident","thin mewing call"],
+"peregrine falcon":["short powerful hooked bill","cliffs, cities, open country","resident and migrant","harsh kak-kak-kak"],
+"lanner falcon":["strong hooked bill, pale crown","open country, cliffs","resident","repeated kek-kek"],
+"rock kestrel":["fine hooked bill","mountains, rocky outcrops","resident","high shrill klee-klee"],
+"amur falcon":["small orange-based bill","grassland, roosts in towns","Palearctic migrant (Nov–Mar)","chattering kew-kew"],
+"spotted eagle-owl":["prominent ear tufts, hooked bill","towns, scrub, open woodland","resident, common","deep double hoot hoo-hooo"],
+"western barn owl":["heart face, hooked bill","barns, old buildings, grassland","resident, common","shreee hissing scream"],
+"spotted thick-knee":["stout yellow-black bill","open ground, golf courses","resident, nocturnal","piping tchick calls at night"],
+"water thick-knee":["stout bill","river and dam edges","resident","repeated tit-tit-tit"],
+"fiery-necked nightjar":["small wide gape bristles","woodland, gardens","resident","good-lord-deliver-us whistle"],
+"rock dove":["short pigeon bill","cities, towns","feral resident","cooing roo-c'too"],
+"speckled pigeon":["small bill with red eye patch","villages, cliffs, farms","resident","rolling doo-doo-doo"],
+"red-eyed dove":["small slender bill","gardens, woodland, towns","resident, common","loud coo COO coo"],
+"ring-necked dove":["small grey bill","gardens, towns, savanna","resident, common","cascading kuk-kuk-kuk-coo"],
+"laughing dove":["small slim bill","gardens, towns","resident, common","soft laughing coo-coo-coo-coo"],
+"namaqua dove":["tiny bill, long tail","arid scrub, gardens","resident, nomadic","repeated tuu tuu"],
+"african olive pigeon":["small pigeon bill","afromontane forest canopy","resident, shy","deep repeated coo-koo-koo"],
+"knysna turaco":["tall red crest, short curved bill","afromontane forest","near-endemic resident","loud koko-koko-koko"],
+"red-chested cuckoo":["short curved bill, grey hawk shape","forest edges, gardens","intra-African migrant (Sep–Jan)","three-note piet-my-vrou"],
+"black cuckoo":["short curved bill","woodland, fynbos edges","intra-African migrant (Oct–Jan)","whistled quick-quick-quick"],
+"diederik cuckoo":["short decurved bill","gardens, woodland","intra-African migrant (Sep–Apr)","repeated dee-dee-deederik"],
+"klaas's cuckoo":["short bill","woodland, gardens","intra-African migrant (Sep–Jan)","rising die-die-diediediedie"],
+"burchell's coucal":["stout decurved bill","dense thickets, gardens","resident","liquid rainbird bubbling calls"],
+"narina trogon":["short broad bill, yellow eye-ring","afromontane and coastal forest","resident","far-carrying repeated toy...toy..."],
+"giant kingfisher":["massive dagger bill","rivers, lakes, estuaries","resident","loud kek-kek-kek in flight"],
+"pied kingfisher":["long straight black bill","any open water","resident, common","sharp kek-kek; hovers before diving"],
+"brown-hooded kingfisher":["red bill","woodland, gardens","resident","chattering trill"],
+"half-collared kingfisher":["short dark bill","fast forest streams","resident","high trill from perch"],
+"malachite kingfisher":["red dagger bill","reed-fringed fresh water","resident","high pitched tsip"],
+"european bee-eater":["long slim decurved bill","open country, hawking on wing","Palearctic migrant (Dec–Mar)","liquid prreee-prreee"],
+"white-fronted bee-eater":["long decurved black bill","riverbanks with colonies","resident","rolling quarry-quarry"],
+"little swift":["small broad bill","cliffs, bridges, buildings","resident, common","twittering screes"],
+"white-rumped swift":["small wide bill","anywhere, kleptoparasitic at nests","resident","screaming screee calls"],
+"barn swallow":["short flat bill","open country, farm dams","Palearctic migrant (Sep–Apr)","cheery twittering song"],
+"greater striped swallow":["short wide bill","open grassland, towns","resident and intra-African","chirruping trills"],
+"rock martin":["short wide bill","cliffs, gorges, buildings","resident","soft twittering"],
+"helmeted guineafowl":["short downcurved bill","farmland, bushveld, suburbs","resident, common","harsh kek-kek-kek-krrek"],
+"cape spurfowl":["stout red-based bill with spur","fynbos, thickets, farms","near-endemic resident","loud cackling cac-cac-caac"],
+"blue crane":["stout grey bill","open grassland and karoo","near-endemic, National bird, Vulnerable","rasping kraank; bugling duets"],
+"secretarybird":["hooked raptor bill on eagle body","open grassland and karoo","resident, Vulnerable","corvid-like kaa calls at nest"],
+"black-collared barbet":["stout hooked bill","woodland, gardens","resident","antiphonal duet trrrr-trrrr"],
+"red-fronted tinkerbird":["tiny heavy bill","woodland, gardens","resident","persistent tinker-tinker-tinker"],
+"greater honeyguide":["pink bill, white outer tail","woodland, thickets","resident","guiding churr-churr"],
+"african hoopoe":["long slender decurved bill","lawns, open woodland","resident, common"," hoop-hoop-hoop calls"],
+"green wood hoopoe":["long red decurved bill","woodland, riverine bush","resident","cackling chattering kak-kak"],
+"knysna woodpecker":["stout dark bill","coastal and afromontane forest","near-endemic, Near-threatened","repeated trrrt trrrt"],
+"golden-tailed woodpecker":["stout chisel bill","woodland, thickets","resident","loud trrrrt drumming rolls"],
+"cardinal woodpecker":["small chisel bill","woodland, gardens","resident, common","high trilled trrrriiii"],
+"fork-tailed drongo":["short heavy hooked bill","open woodland, gardens","resident, common","varied whistles; superb mimic"],
+"southern boubou":["slender slightly hooked bill","thickets, gardens, coastal bush","resident","antiphonal woo-hoo duets"],
+"black-backed puffback":["short hooked bill","woodland, gardens","resident","purring and whistled displays"],
+"southern tchagra":["stout hooked bill","coastal thicket, fynbos","near-endemic resident","melancholy descending whistles"],
+"olive bushshrike":["slightly hooked bill","afromontane forest","resident","liquid melancholy duet"],
+"grey-headed bushshrike":["massive hooked bill","woodland, thickets","resident","far-carrying ghostly hoo calls"],
+"southern fiscal":["strong hooked black bill","open country, gardens","resident, common","harsh chattering and mimicry"],
+"cape batis":["small broad-based bill","forest, fynbos, gardens","resident","three-note weet-wee-weet duet"],
+"black-headed oriole":["slightly decurved pink bill","woodland, gardens","resident, common","liquid fluting wheedle-whee-you"],
+"bokmakierie":["stout hooked grey bill","fynbos, gardens, coastal bush","near-endemic resident","antiphonal bok-bok-keeee duets"],
+"cape robin-chat":["slender slightly curved bill","gardens, forest edges, fynbos","resident, common","varied sweet whistled song"],
+"chorister robin-chat":["stout dark bill","afromontane forest","near-endemic resident","rich varied song; mimic"],
+"karoo scrub robin":["slender curved bill","karoo scrub, fynbos","near-endemic resident","melodious repetitive song"],
+"familiar chat":["shortish curved bill","rocks, koppies, buildings","resident, common","melodious twittering"],
+"african stonechat":["short pointed bill","open grassland, fynbos","resident","dry chack-chack and whistled song"],
+"mocking cliff-chat":["dark bill","rocky gorges, cliffs","resident","varied mimic-rich song"],
+"olive thrush":["medium curved bill","gardens, forest","resident","melodious phrase-repeated song"],
+"karoo thrush":["slightly curved bill","karoo towns and scrub","near-endemic resident","cheerful varied whistling"],
+"cape wagtail":["slender black bill","lawns, gardens, water edges","resident, common","simple repeated tzee-tzee"],
+"african pipit":["thin pointed bill","open grassland, ploughed fields","resident, common","repeated chip-chip in display"],
+"cape longclaw":["long straight hindclaw, short bill","open grassland","near-endemic resident","churring onoma calls in display"],
+"lesser swamp warbler":["slim pointed bill","reedbeds and rank vegetation","resident","repeated trrrt and churring"],
+"willow warbler":["fine dark pointed bill","gardens, woodland edges","Palearctic migrant (Nov–Mar)","soft descending whistled song"],
+"bar-throated apalis":["fine slightly decurved bill","fynbos, forest edges, gardens","near-endemic resident","repeated chip-chewee duets"],
+"green-backed camaroptera":["small pointed bill","thickets, forest undergrowth","resident","persistent bleating maa-maa"],
+"yellow-bellied eremomela":["tiny slender bill","dry woodland, acacia","resident","high tseep-tseep contact calls"],
+"karoo prinia":["slightly decurved bill","karoo scrub, fynbos","near-endemic resident","repeated trilled prrrreee"],
+"tawny-flanked prinia":["short decurved bill","rank grass, thickets","resident","monotonous wheezing chiirup"],
+"levaillant's cisticola":["short decurved bill","vleis, wet grassland","resident","repeated chee-chee-chee in display"],
+"zitting cisticola":["tiny decurved bill","grassland, wet edges","resident","zigzag display with zitting notes"],
+"neddicky":["small decurved bill","fynbos, scrub, woodland","resident","monotonous ticking song"],
+"victorin's warbler":["slender decurved bill","fynbos slopes","near-endemic resident","rich varied warbling song"],
+"cape grassbird":["slender decurved bill","fynbos, coastal scrub","near-endemic resident","scratchy jangling song"],
+"knysna warbler":["slender bill","dense coastal forest","near-endemic, Near-threatened","loud krrrr trill, skulking"],
+"african dusky flycatcher":["small broad bill","gardens, forest edges","resident","thin tsit and soft song"],
+"spotted flycatcher":["broad flat bill","gardens, woodland edges","Palearctic migrant (Nov–Mar)","thin grating tzzzic"],
+"african paradise flycatcher":["short broad bill","woodland, riverine forest","intra-African migrant (Sep–Apr)","harsh zwee and sweet song"],
+"greater double-collared sunbird":["long slender decurved bill","gardens, fynbos, forest","near-endemic resident","loud rapid chee-chee-chee song"],
+"southern double-collared sunbird":["short decurved bill","gardens, fynbos","near-endemic resident, common","rising chee-weet song"],
+"malachite sunbird":["long decurved black bill","fynbos, aloes, gardens","resident","sharp tzzzt; clinking song"],
+"amethyst sunbird":["long decurved bill","gardens, woodland","resident","whistled swee-swee song"],
+"collared sunbird":["short decurved bill","forest, woodland","resident","high cheeping contact calls"],
+"orange-breasted sunbird":["long decurved bill","fynbos, protea slopes","near-endemic resident","nasal tzee-tzee-tzee song"],
+"cape sugarbird":["long decurved bill","fynbos with proteas","near-endemic resident","loud cheep-cheep and rattle"],
+"cape white-eye":["small fine bill","gardens, fynbos, forest","near-endemic resident, common","bubbly trilled contact calls"],
+"sombre greenbul":["slender grey-green bill","forest, gardens, bush","resident, common","repeated willie willie-willie-wier"],
+"cape bulbul":["short slim decurved bill","fynbos, gardens, coastal bush","near-endemic resident, common","noisy chattering peep-peep-peep"],
+"common starling":["sharp pointed yellow bill","towns, farmland","Palearctic migrant (Nov–Mar)","varied whistling and mimicry"],
+"red-winged starling":["slightly decurved dark bill","cliffs, gorges, towns","resident, common","melodious two-note chok-chok whistles"],
+"house sparrow":["stout conical bill","towns, farms, buildings","introduced resident","cheery chirrup chirrup"],
+"cape sparrow":["stout conical bill","fynbos, towns, farmland","near-endemic resident","chirping chwee-chwee calls"],
+"cape weaver":["stout conical bill","wetland edges, gardens, farmland","near-endemic resident","bubbling wheezy song at colony"],
+"southern masked weaver":["strong conical black bill","reedbeds, gardens, trees","resident, common","bubbling swizzle song at nest"],
+"thick-billed weaver":["massive conical pale bill","reedbeds, vlei edges","resident","clipped chattering song"],
+"southern red bishop":["short conical black bill","reedbeds, wet grassland","resident, common","buzzy bzz-bzz song in display"],
+"red-billed quelea":["short red conical bill","grassland, thornveld","resident, nomadic in huge flocks","constant massed chattering"],
+"pin-tailed whydah":["short red conical bill (male: black)","open scrub, gardens","resident","whistled and buzzing display song"],
+"common waxbill":["tiny red conical bill","rank grass, reed edges","resident, common","peeping tseee-tseee flocks"],
+"swee waxbill":["small grey bill","forest edges, thickets","near-endemic resident","soft swee-swee calls"],
+"red-billed firefinch":["tiny red bill","gardens, villages","resident","high peeping notes"],
+"bronze mannikin":["short heavy grey bill","woodland, towns","resident, common","repeated tee-tee chatter"],
+"cape canary":["small conical grey bill","fynbos, gardens, parks","near-endemic resident","chattering trills and whistles"],
+"brimstone canary":["heavy dark conical bill","forest edges, gardens","resident","musical tsee-tsee-tsee song"],
+"yellow canary":["stout conical bill","karoo scrub, coastal bush","near-endemic resident","repeated tsee-tsi-tsi song"],
+"white-throated canary":["heavy pale conical bill","fynbos, coastal scrub","near-endemic resident","harsh jangling song"],
+"cape siskin":["fine conical bill","fynbos, mountain slopes","near-endemic resident","rising tsee-see-see calls"],
+"protea seedeater":["heavy grey bill","fynbos with proteas","near-endemic, Vulnerable","soft melodic warbling"],
+"streaky-headed seedeater":["medium conical bill","fynbos, gardens, forest edges","near-endemic resident","pleasing tsee-tsee-tsee-wee song"],
+"cape bunting":["short conical bill","mountains, rocky slopes","near-endemic resident","melodious repeated whistle song"],
+"pied crow":["all-purpose black bill","towns, roads, open country","resident, common","cawing kraa-kraa"],
+"cape crow":["slender black bill","open country, farmland","resident, common","cawing krraa and gurgling"],
+"white-necked raven":["deep heavy bill","mountains, gorges, towns","resident","deep croaking kraa"],
+"speckled mousebird":["short pink-grey bill","gardens, scrub, forest edges","resident, common","chi-chi-chi chatter"],
+"red-faced mousebird":["short grey bill","scrub, gardens, watercourses","resident, common","tchik-tchik-tchik in flight"],
+"hamerkop":["hammer-crested head, moderate bill","wetlands of all kinds","resident, common","shrinking chip-chip; kek calls"],
+"african penguin":["pointed black-tipped bill","inshore islands, coastal waters","near-endemic, Endangered","donkey-like braying at colony"],
+"black harrier":["long-winged hooked bill","fynbos, renosterveld, marshes","near-endemic, regionally Vulnerable","repeated kek-kek over display"]
+};
+
+const GROUP_EXTRA = {
+"sunbird":["long decurved bill","fynbos, gardens, forest","resident","high cheeping and rattles"],
+"canary":["conical seed bill","fynbos, scrub, gardens","resident","trills and whistled songs"],
+"cisticola":["short decurved bill","grassland, wet edges","resident","repeated display notes"],
+"warbler":["slender pointed bill","reeds, thickets, scrub","mostly resident","churring and repeated notes"],
+"swift":["small wide-gaping bill","aerial over all habitats","resident or migrant","twittering and screaming"],
+"swallow":["short flat bill","aerial, perches on wires","migrant or resident","twittering song"],
+"martin":["short wide bill","aerial, cliffs and banks","resident or migrant","soft twittering"],
+"dove":["small pigeon bill","gardens, woodland, towns","resident, common","repeated cooing"],
+"pigeon":["small pigeon bill","forest to cities","resident","rolling cooing"],
+"heron":["long dagger bill","wetlands, shores","resident","harsh croaks in flight"],
+"egret":["slim dagger bill","shallow waters","resident","quiet croaks"],
+"cormorant":["hooked fish bill","lakes, coasts, rivers","resident","grunts at roosts"],
+"gull":["stout gull bill","coasts, lakes, tips","resident","loud keening and laughing"],
+"tern":["slim pointed bill","coasts and estuaries","resident or migrant","rasping flight calls"],
+"eagle":["large hooked bill","open country, mountains","resident","far-carrying display calls"],
+"buzzard":["hooked bill with yellow cere","open country, perches","resident or migrant","thin mewing calls"],
+"harrier":["owl-like face, hooked bill","open marsh and grassland","resident or migrant","repeated kek in display"],
+"falcon":["notched hooked bill","open country, cliffs","resident or migrant","hard kak-kak calls"],
+"sparrowhawk":["short hooked bill","woodland, gardens","resident","rapid kek-kek-kek"],
+"goshawk":["strong hooked bill","forest and woodland","resident","clucking kak-kak"],
+"kingfisher":["dagger bill","water edges","resident","shrill flight notes"],
+"woodpecker":["chisel bill","trees, trunks, branches","resident","drumming and trilled calls"],
+"plover":["short wader bill","open shores and grassland","resident or migrant","repeated flight calls"],
+"sandpiper":["medium wader bill","wetland margins","mostly Palearctic migrant","trilled flight calls"],
+"duck":["flat spatulate or diving bill","freshwater wetlands","resident","quacks and whistles"],
+"teal":["small flat bill","shallow fresh water","resident or nomadic","whistled calls"],
+"starling":["stout pointed bill","open country, towns","resident or migrant","varied whistles and mimicry"],
+"weaver":["strong conical bill","reedbeds, woodland","resident","bubbling colonial song"],
+"owl":["silent hooked bill, facial disc","varied, mostly nocturnal","resident","hoots, screeches or whistles"],
+"nightjar":["wide gape with bristles","open woodland, scrub","resident or migrant","churring and wing claps"],
+"lapwing":["short spurred-wing wader bill","open wetland edges","resident","noisy repeated alarm calls"],
+"flycatcher":["broad flat bill","perches in woodland, gardens","resident or migrant","thin calls and soft song"],
+"robin-chat":["medium slender bill","thickets, gardens, forest","resident","rich whistled song"],
+"robin":["small slender bill","forest understorey","resident","melodious song"],
+"pipit":["thin pointed bill","open grassland","resident","repeated display calls"],
+"thick-knee":["stout yellow-black bill","open ground, edges","resident, crepuscular","piping calls at dusk"],
+"apalis":["fine decurved bill","undergrowth, forest edges","resident","repeated duetting notes"],
+"prinia":["short decurved bill","rank vegetation","resident","monotonous trills"],
+"waxbill":["tiny conical bill","rank grass, water edges","resident","high peeping flocks"],
+"bishop":["short conical bill","reedbeds, wet grassland","resident","buzzy display song"],
+"whydah":["short conical bill","open scrub, grassland","resident","display song with mimicry"],
+"seedeater":["conical bill","fynbos, gardens","resident","whistled and jangling song"],
+"bunting":["conical bill","open scrub, rocky slopes","resident","repeated melodic whistles"],
+"bulbul":["slim decurved bill","bush, gardens, forest edge","resident, vocal","noisy chattering"],
+"greenbul":["slender bill","forest and thicket","resident","liquid repeated phrases"],
+"barbet":["stout hooked bill","woodland, gardens","resident","repeated monotonous calls"],
+"coucal":["stout decurved bill","dense thicket, reeds","resident","bubbling rainbird calls"],
+"turaco":["short curved bill, crest","forest and riverine bush","resident","loud repeated koko calls"],
+"goose":["short goose bill","lakes, dams, grassland","resident","honking and hissing"],
+"stork":["long heavy bill","wetlands, grassland","resident or migrant","bill-clattering"],
+"crane":["stout bill","open grassland, wetlands","resident or local","bugling and rasping calls"],
+"sparrow":["stout conical bill","towns, farms, villages","resident","chirping calls"],
+"raven":["deep heavy bill","mountains, gorges","resident","deep croaking"],
+"crow":["all-purpose bill","open country, towns","resident","cawing calls"],
+"mousebird":["short grey bill","scrub, gardens","resident","chi-chi chatter"],
+"honeyguide":["shortish bill","woodland, thickets","resident","churring and guiding calls"],
+"flufftail":["short bill","dense reedbeds","resident","repeated booming at night"],
+"grebe":["short pointed bill","freshwater lakes, dams","resident","trilling calls"],
+"chat":["slender curved bill","rocks, scrub, open ground","resident","melodious twittering"],
+"trogon":["short broad bill","forest canopy","resident","far-carrying repeated toy calls"],
+"courser":["short bill","arid open ground","resident","sharp flight calls"],
+"lark":["shortish bill","open plains","resident","display song in flight"],
+"boubou":["slender hooked bill","thickets, gardens","resident","antiphonal duets"],
+"tchagra":["stout hooked bill","thicket, fynbos","resident","descending whistled phrases"],
+"gallinule":["bright shield bill","reedbeds, ponds","resident","repeated krek calls"],
+"bittern":["stout dagger bill","dense reedbeds","resident","booming calls"],
+"longclaw":["short bill, long hindclaw","open grassland","resident","churring display calls"],
+"grassbird":["slender decurved bill","tall scrub, wet edges","resident","scratchy jangling song"],
+"bustard":["stout bill","open plains","resident","booming display calls"],
+"quail":["small conical bill","grassland, crops","resident or migrant","harsh flush calls"],
+"rail":["moderate decurved bill","reedbeds, marshes","resident","repeated krrak calls"],
+"spurfowl":["stout bill with spurs","scrub, farmland","resident","loud cackling calls"],
+"greenshank":["long upturned bill","wetlands, estuaries","Palearctic migrant","loud repeated chew-chew"],
+"openbill":["bill with gap","wetlands","resident","croaking calls"],
+"osprey":["hooked fish-eating bill","large waters","migrant or resident","sharp whistle calls"],
+"shoveler":["spatula bill","shallow nutrient waters","resident or migrant","nasal calls"],
+"snipe":["very long straight bill","marshes, damp ground","resident","winnowing display"],
+"crake":["short bill","reedbeds, damp grass","resident or migrant","repeated krek-krek"],
+"widowbird":["short conical bill","grassland","resident","buzzy display song"],
+"mannikin":["short heavy bill","woodland, towns","resident","constant chattering"],
+"quelea":["short conical bill","grassland, thornveld","nomadic in flocks","massed chattering"],
+"stint":["tiny straight bill","mudflats, shorelines","Palearctic migrant","hard tit calls"],
+"ibis":["long decurved bill","wetlands, fields","resident","croaky calls at roosts"],
+"stilt":["fine straight bill","shallow water","resident","sharp kek-kek"],
+"avocet":["long upcurved bill","shallow brackish water","resident","nasal kluit"],
+"siskin":["fine conical bill","fynbos, mountains","resident","rising tsee calls"]
+};
+
+function inSouthAfrica(lat, lon){
+  return lat >= SA.minLat && lat <= SA.maxLat && lon >= SA.minLon && lon <= SA.maxLon;
+}
+
+function toPentad(lat, lon){
+  const latAbs = Math.abs(lat), lonAbs = Math.abs(lon);
+  const latMin = Math.floor((latAbs*60) / 5) * 5;
+  const lonMin = Math.floor((lonAbs*60) / 5) * 5;
+  const pad = (deg, min) => String(Math.floor(deg)).padStart(2,'0') + String(min).padStart(2,'0');
+  return pad(latAbs, latMin%60) + '_' + pad(lonAbs, lonMin%60);
+}
+
+function setStatus(msg, isError = true){
+  const s = document.getElementById('status');
+  s.textContent = msg;
+  s.style.color = isError ? '#a33' : '#555';
+}
+
+document.getElementById('place').addEventListener('change', function(){
+  if(!this.value) return;
+  const [lat, lon] = this.value.split(',');
+  document.getElementById('lat').value = lat;
+  document.getElementById('lon').value = lon;
+});
+
+// ---------- Saved ("My") pentads ----------
+function myKey(){ return 'sabap2_my_pentads'; }
+function loadMyPentads(){
+  try{ return Object.assign(Object.create(null), JSON.parse(localStorage.getItem(myKey()) || '{}')); }
+  catch(e){ return Object.create(null); }
+}
+function saveMyPentads(list){ localStorage.setItem(myKey(), JSON.stringify(list)); }
+
+function refreshMyDropdown(selected){
+  const sel = document.getElementById('mypentads');
+  const list = loadMyPentads();
+  sel.innerHTML = '<option value="">— choose a saved pentad —</option>';
+  const codes = Object.keys(list).sort((a,b) => list[a].localeCompare(list[b]));
+  for(const code of codes){
+    const opt = document.createElement('option');
+    opt.value = code;
+    opt.textContent = list[code] === code ? code : list[code] + '  (' + code + ')';
+    if(code === selected) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+async function loadMyPentad(){
+  const code = document.getElementById('mypentads').value;
+  if(!code) return;
+  const m = code.match(/^(\d{2})(\d{2})_(\d{2})(\d{2})$/);
+  if(!m){ setStatus('Saved pentad code ' + code + ' is malformed.'); return; }
+  const lat = -(parseInt(m[1],10) + (parseInt(m[2],10) + 2.5)/60);
+  const lon =   parseInt(m[3],10) + (parseInt(m[4],10) + 2.5)/60;
+  document.getElementById('lat').value = lat.toFixed(4);
+  document.getElementById('lon').value = lon.toFixed(4);
+  await loadForCoords(lat, lon, { fromUser: true });
+}
+
+function deleteMyPentad(){
+  const code = document.getElementById('mypentads').value;
+  if(!code){ setStatus('Select a saved pentad to delete first.'); return; }
+  const list = loadMyPentads();
+  delete list[code];
+  saveMyPentads(list);
+  refreshMyDropdown();
+  setStatus('Removed ' + code + ' from My pentads (its ticks are kept).', false);
+}
+
+function saveCurrentPentad(){
+  if(!currentPentad){ setStatus('Load a pentad first, then save it.'); return; }
+  const nameInput = document.getElementById('pentadname').value.trim();
+  const list = loadMyPentads();
+  list[currentPentad] = nameInput || list[currentPentad] || currentPentad;
+  saveMyPentads(list);
+  refreshMyDropdown(currentPentad);
+  document.getElementById('pentadname').value = '';
+  setStatus('Saved as "' + list[currentPentad] + '" (' + currentPentad + ').', false);
+}
+
+function autoAddMyPentad(pentad){
+  const list = loadMyPentads();
+  if(!(pentad in list)){
+    list[pentad] = pentad;
+    saveMyPentads(list);
+    refreshMyDropdown(pentad);
+  }
+}
+
+// ---------- Tick storage (per pentad) ----------
+function tickKey(pentad){ return 'sabap2_ticks_' + pentad; }
+function loadTicks(pentad){
+  try{ return new Set(JSON.parse(localStorage.getItem(tickKey(pentad)) || '[]')); }
+  catch(e){ return new Set(); }
+}
+function saveTicks(){
+  if(!currentPentad) return;
+  localStorage.setItem(tickKey(currentPentad), JSON.stringify([...seen]));
+}
+function clearTicks(){
+  if(!currentPentad) return;
+  // Untick only in the current pentad. Birds already on the trip list stay there.
+  const unticked = [...seen];
+  seen = new Set();
+  saveTicks();
+  renderTable();
+  if(activeTrip){
+    setStatus('Cleared ' + unticked.length + ' ticks for pentad ' + currentPentad +
+      '. The trip list keeps everything already recorded.', false);
+  }
+}
+
+// ---------- Trips ----------
+// Storage: { name: { start: ISO, end: ISO|null, birds: { speciesName: { pentads: {code: rr}, first: ISO } } } }
+function tripKey(){ return 'sabap2_trips'; }
+function loadTrips(){
+  try{ return Object.assign(Object.create(null), JSON.parse(localStorage.getItem(tripKey()) || '{}')); }
+  catch(e){ return Object.create(null); }
+}
+function saveTrips(t){ localStorage.setItem(tripKey(), JSON.stringify(t)); }
+
+function refreshTripDropdown(){
+  const sel = document.getElementById('tripsel');
+  const trips = loadTrips();
+  sel.innerHTML = '<option value="">— past trips —</option>';
+  Object.keys(trips).sort((a,b) => (trips[b].start||'').localeCompare(trips[a].start||''))
+    .forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      const t = trips[name];
+      const dates = (t.start ? t.start.slice(0,10) : '?') + (t.end ? ' – ' + t.end.slice(0,10) : ' – open');
+      opt.textContent = name + '  (' + dates + ')';
+      sel.appendChild(opt);
+    });
+}
+
+function tripLine(){
+  const el = document.getElementById('tripline');
+  if(activeTrip){
+    const trips = loadTrips();
+    const n = trips[activeTrip] ? Object.keys(trips[activeTrip].birds).length : 0;
+    el.textContent = '● Trip running: "' + activeTrip + '" — ' + n + ' species so far. Ticks anywhere are added to it.';
+  } else {
+    el.textContent = '';
+  }
+}
+
+function startTrip(){
+  const name = document.getElementById('tripname').value.trim();
+  if(!name){ setStatus('Give the trip a name first, e.g. "Garden Route June".'); return; }
+  const trips = loadTrips();
+  if(trips[name] && trips[name].birds && Object.keys(trips[name].birds).length){
+    setStatus('A trip called "' + name + '" already exists — pick another name, or delete the old one first.');
+    return;
+  }
+  trips[name] = { start: new Date().toISOString(), end: null, birds: Object.create(null) };
+  saveTrips(trips);
+  activeTrip = name;
+  document.getElementById('tripname').value = '';
+  showTripButtons();
+  refreshTripDropdown();
+  tripLine();
+  setStatus('Trip "' + name + '" started. Tick birds as usual — every pentad counts.', false);
+}
+
+function endTrip(){
+  if(!activeTrip) return;
+  const trips = loadTrips();
+  if(trips[activeTrip]) trips[activeTrip].end = new Date().toISOString();
+  saveTrips(trips);
+  const ended = activeTrip;
+  activeTrip = null;
+  showTripButtons();
+  refreshTripDropdown();
+  tripLine();
+  setStatus('Trip "' + ended + '" closed. View it any time from the past-trips dropdown.', false);
+}
+
+function showTripButtons(){
+  document.getElementById('tripStartBtn').hidden = !!activeTrip;
+  document.getElementById('tripEndBtn').hidden = !activeTrip;
+}
+
+function currentOrSelectedTrip(){
+  let name = activeTrip;
+  if(!name){
+    name = document.getElementById('tripsel').value;
+    if(!name){ setStatus('No trip running — select a past trip first, or start a new one.'); return null; }
+  }
+  const t = loadTrips()[name];
+  if(!t){ setStatus('Trip "' + name + '" not found.'); return null; }
+  return { name, t };
+}
+
+function viewTrip(){
+  const got = currentOrSelectedTrip();
+  if(!got) return;
+  const { name, t } = got;
+
+  const body = document.getElementById('tripbody');
+  body.innerHTML = '';
+  const birds = t.birds || {};
+  // Sort: most pentads first, then best reporting rate
+  const entries = Object.keys(birds).map(sp => {
+    const pentads = birds[sp].pentads || {};
+    const codes = Object.keys(pentads);
+    const bestRR = Math.max(0, ...codes.map(c => pentads[c] || 0));
+    return { sp, codes, bestRR };
+  }).sort((a,b) => b.codes.length - a.codes.length || b.bestRR - a.bestRR || a.sp.localeCompare(b.sp));
+
+  entries.forEach(e => {
+    const notes = fieldNotes(e.sp);
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + e.sp + '</td>' +
+      '<td>' + e.codes.length + '</td>' +
+      '<td class="desc">' + e.codes.join(', ') + '</td>' +
+      '<td>' + (e.bestRR ? e.bestRR.toFixed(1) + '%' : '—') + '</td>' +
+      '<td class="desc">' + notes[0] + ' cm — ' + notes[1] +
+      (notes[4] !== '—' ? '<br>Status: ' + notes[4] : '') + '</td>';
+    body.appendChild(tr);
+  });
+  if(!entries.length){
+    body.innerHTML = '<tr><td colspan="5">No birds ticked on this trip yet.</td></tr>';
+  }
+  const dates = (t.start ? t.start.slice(0,10) : '?') + (t.end ? ' to ' + t.end.slice(0,10) : ' (still running)');
+  document.querySelector('#triplist h2').textContent =
+    'Trip list — "' + name + '" (' + dates + '): ' + entries.length + ' species';
+  document.getElementById('triplist').hidden = false;
+  document.getElementById('triplist').scrollIntoView({ behavior: 'smooth' });
+}
+
+function deleteTrip(){
+  const name = document.getElementById('tripsel').value;
+  if(!name){ setStatus('Select a past trip to delete first.'); return; }
+  const trips = loadTrips();
+  delete trips[name];
+  saveTrips(trips);
+  refreshTripDropdown();
+  document.getElementById('triplist').hidden = true;
+  setStatus('Deleted trip "' + name + '".', false);
+}
+
+// ---------- Field card export ----------
+// Produces one card-style section per pentad visited, ready to transcribe
+// into the SABAP2 submission form. Submission itself must be done on the
+// SABAP2 site (sabap2.birdmap.africa) — there is no public submission API.
+function exportTrip(){
+  const got = currentOrSelectedTrip();
+  if(!got) return;
+  const { name, t } = got;
+  const birds = t.birds || {};
+  if(!Object.keys(birds).length){ setStatus('No birds ticked on this trip yet — nothing to export.'); return; }
+
+  // Group ticks by pentad
+  const byPentad = Object.create(null);
+  Object.keys(birds).forEach(sp => {
+    const pentads = birds[sp].pentads || {};
+    Object.keys(pentads).forEach(code => {
+      if(!byPentad[code]) byPentad[code] = [];
+      byPentad[code].push({ sp, rr: pentads[code] || 0 });
+    });
+  });
+
+  let out = 'SABAP2 FIELD CARD SUMMARY — trip "' + name + '"\n';
+  out += 'Period: ' + (t.start ? t.start.slice(0,10) : '?') + ' to ' +
+         (t.end ? t.end.slice(0,10) : 'ongoing') + '\n';
+  out += 'Observer: ____________________    Contact (email/phone): ____________________\n';
+  out += 'Start time per card: ______    Hours spent in pentad: ______ (full protocol needs 2 h minimum)\n';
+  out += 'IMPORTANT: submit one card per pentad on sabap2.birdmap.africa, and record\n';
+  out += 'ALL species seen in that pentad during the card period — the lists below are\n';
+  out += 'your trip ticks, a memory aid, not necessarily the complete card.\n\n';
+
+  const codes = Object.keys(byPentad).sort();
+  for(const code of codes){
+    const list = byPentad[code].sort((a,b) => a.sp.localeCompare(b.sp));
+    out += '=== PENTAD ' + code + ' — ' + list.length + ' species ticked ===\n';
+    list.forEach((e,i) => {
+      out += String(i+1).padStart(3,' ') + '. ' + e.sp +
+             (e.rr ? '   (typical reporting rate ' + e.rr.toFixed(0) + '%)' : '') + '\n';
+    });
+    out += '\n';
+  }
+
+  const blob = new Blob([out], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'fieldcard_' + name.replace(/[^\w-]+/g,'_') + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setStatus('Field card summary downloaded — ' + codes.length + ' pentad card' +
+    (codes.length === 1 ? '' : 's') + '. Open the .txt file, or submit on sabap2.birdmap.africa.', false);
+}
+
+// Record a ticked bird on the running trip
+function recordOnTrip(species, pentad, rr){
+  if(!activeTrip) return;
+  const trips = loadTrips();
+  const t = trips[activeTrip];
+  if(!t) return;
+  if(!t.birds[species]){
+    t.birds[species] = { pentads: Object.create(null), first: new Date().toISOString() };
+  }
+  // keep the best reporting rate seen for that pentad
+  const prev = (t.birds[species].pentads[pentad] || 0);
+  if(rr > prev) t.birds[species].pentads[pentad] = rr;
+  saveTrips(trips);
+  tripLine();
+}
+
+// ---------- Field notes and size ----------
+// Returns [size, marks, bill, habitat, status, calls]
+function fieldNotes(name){
+  const DASH = ["—","—","—","—","—","—"];
+  const n = name.toLowerCase().replace(/\s*\[x\]\s*$/, '').trim().replace(/\s+/g,' ');
+  const findExtra = (key) => EXTRA_INFO[key] || null;
+  const findGroup = (key) => GROUP_EXTRA[key] || null;
+
+  let base = SPECIES_INFO[n];
+  let extra = findExtra(n);
+  if(!base){
+    const words = n.split(' ');
+    if(words.length > 1){
+      for(let i = 1; i < words.length; i++){
+        const rot = words.slice(i).join(' ') + ' ' + words.slice(0, i).join(' ');
+        if(SPECIES_INFO[rot]){ base = SPECIES_INFO[rot]; extra = extra || findExtra(rot); break; }
+      }
+    }
+  }
+  // group-level fallbacks by last word (checking both tables)
+  const words = n.split(' ');
+  for(let i = words.length - 1; i >= 0; i--){
+    const w = words[i];
+    if(!base && GROUP_INFO[w]){ base = GROUP_INFO[w]; }
+    if(!extra && GROUP_EXTRA[w]){ extra = GROUP_EXTRA[w]; }
+    if(base && extra) break;
+  }
+  if(!base && !extra) return DASH;
+  const b = base || ["—","—"];
+  const x = extra || ["—","—","—","—"];
+  return [b[0], b[1], x[0], x[1], x[2], x[3]];
+}
+
+function sizeCategory(name){
+  const sizeStr = fieldNotes(name)[0];
+  const m = sizeStr.match(/(\d+)(?:[–\-](\d+))?/);
+  if(!m) return null;
+  const a = parseInt(m[1], 10);
+  const b = m[2] ? parseInt(m[2], 10) : a;
+  const mid = (a + b) / 2;
+  if(mid <= 15) return 1;
+  if(mid <= 20) return 2;
+  if(mid <= 30) return 3;
+  if(mid <= 45) return 4;
+  return 5;
+}
+
+// ---------- Column picker (up to 4 optional columns) ----------
+const OPT_COLS = [
+  { key:'size',    label:'Size' },
+  { key:'marks',   label:'Field marks' },
+  { key:'bill',    label:'Bill' },
+  { key:'habitat', label:'Habitat' },
+  { key:'status',  label:'Status' },
+  { key:'calls',   label:'Calls' }
+];
+const MAX_COLS = 4;
+const colKey = 'sabap2_columns';
+
+function selectedCols(){
+  const boxes = [...document.querySelectorAll('#colpick input[data-col]')];
+  const picked = boxes.filter(b => b.checked).map(b => b.dataset.col);
+  // fall back to defaults if nothing picked
+  return picked.length ? picked : ['size','marks'];
+}
+
+function initColumnPicker(){
+  const box = document.getElementById('colpick');
+  // restore saved choice
+  let saved = null;
+  try{ saved = JSON.parse(localStorage.getItem(colKey) || 'null'); }catch(e){}
+  if(Array.isArray(saved)){
+    box.querySelectorAll('input[data-col]').forEach(b => {
+      b.checked = saved.includes(b.dataset.col);
+    });
+  }
+  box.addEventListener('change', onColPick);
+  updateColPickUI();
+}
+
+function onColPick(){
+  // enforce the limit of MAX_COLS: when full, disable the unchecked ones
+  const boxes = [...document.querySelectorAll('#colpick input[data-col]')];
+  const checked = boxes.filter(b => b.checked);
+  if(checked.length > MAX_COLS){
+    this.checked = false;   // this = the box just toggled
+  }
+  const nowChecked = boxes.filter(b => b.checked).map(b => b.dataset.col);
+  localStorage.setItem(colKey, JSON.stringify(nowChecked));
+  updateColPickUI();
+  renderTable();
+}
+
+function updateColPickUI(){
+  const boxes = [...document.querySelectorAll('#colpick input[data-col]')];
+  const n = boxes.filter(b => b.checked).length;
+  boxes.forEach(b => {
+    b.parentElement.classList.toggle('off', !b.checked && n >= MAX_COLS);
+  });
+  document.getElementById('colcount').textContent = '(' + n + ' of ' + MAX_COLS + ' chosen)';
+}
+
+// ---------- Filtering ----------
+function passesFilters(name){
+  const query = document.getElementById('typeSearch').value;
+  const sizeSel = document.getElementById('sizeFilter').value;
+  if(query){
+    const q = query.trim().toLowerCase();
+    const groups = TYPE_GROUPS[q] || [q];
+    const words = name.toLowerCase().replace(/\[x\]/g,'').split(/[\s-]+/);
+    if(!groups.some(g => words.includes(g))) return false;
+  }
+  if(sizeSel){
+    const cat = sizeCategory(name);
+    if(cat === null || cat !== parseInt(sizeSel, 10)) return false;
+  }
+  return true;
+}
+
+// ---------- Rendering ----------
+function renderTable(){
+  const tbody = document.querySelector('#tbl tbody');
+  const head = document.getElementById('tblhead');
+  tbody.innerHTML = '';
+
+  const cols = selectedCols();          // up to MAX_COLS optional columns
+  const colIndex = { size:2, marks:3, bill:4, habitat:5, status:6, calls:7 };
+  const colLabels = Object.fromEntries(OPT_COLS.map(c => [c.key, c.label]));
+
+  // header
+  head.innerHTML = '<th style="width:2rem">✓</th><th>Species</th>';
+  cols.forEach(c => { head.innerHTML += '<th>' + colLabels[c] + '</th>'; });
+  head.innerHTML += '<th>Reporting rate</th>';
+
+  const filtered = currentRows.filter(r => passesFilters(r.name));
+  const sorted = [...filtered].sort((a,b) => b.rr - a.rr);
+  const seenRows   = sorted.filter(r => seen.has(r.name));
+  const unseenRows = sorted.filter(r => !seen.has(r.name));
+  const maxRR = sorted.length ? Math.max(...sorted.map(r => r.rr)) || 1 : 1;
+
+  // Report any species with no size/field-mark data so gaps can be filled
+  missingNotesGlobal = sorted.filter(r => fieldNotes(r.name)[1] === '—').map(r => r.name);
+  if(missingNotesGlobal.length){
+    console.log('No field notes for:', missingNotesGlobal.join(', '));
+  }
+
+  function addSectionRow(label, count){
+    const tr = document.createElement('tr');
+    tr.className = 'section';
+    tr.innerHTML = '<td colspan="' + (2 + cols.length) + '">' + label + ' — ' + count + ' species</td>';
+    tbody.appendChild(tr);
+  }
+  function addBirdRow(r){
+    const notes = fieldNotes(r.name);
+    const isSeen = seen.has(r.name);
+    const tr = document.createElement('tr');
+    if(isSeen) tr.className = 'seen';
+    let html = '<td><input type="checkbox" ' + (isSeen ? 'checked' : '') +
+      ' onchange="toggleTick(this)" data-name="' + r.name.replace(/"/g,'&quot;') + '"></td>' +
+      '<td>' + r.name + '</td>';
+    cols.forEach(c => {
+      const v = notes[colIndex[c]];
+      const cls = (c === 'size') ? ' class="size"' : (c === 'marks' || c === 'calls' || c === 'status' || c === 'habitat' || c === 'bill') ? ' class="desc"' : '';
+      if(c === 'marks') html += '<td class="desc">' + v + '</td>';
+      else html += '<td' + cls + '>' + (c === 'size' ? v : v) + '</td>';
+    });
+    html += '<td>' + (r.rr > 0 ? r.rr.toFixed(1) + '%' : '—') +
+      '<br><span class="bar" style="width:' + (r.rr/maxRR*120) + 'px"></span></td>';
+    tr.innerHTML = html;
+    tbody.appendChild(tr);
+  }
+
+  if(seenRows.length){ addSectionRow('SEEN THIS SESSION', seenRows.length); seenRows.forEach(addBirdRow); }
+  if(unseenRows.length){ addSectionRow('STILL TO LOOK FOR', unseenRows.length); unseenRows.forEach(addBirdRow); }
+  if(!sorted.length){
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td colspan="' + (2 + cols.length) + '">No species match the current filters.</td>';
+    tbody.appendChild(tr);
+  }
+  document.getElementById('tbl').hidden = false;
+}
+
+function toggleTick(box){
+  const name = box.getAttribute('data-name');
+  if(box.checked){
+    seen.add(name);
+    const row = currentRows.find(r => r.name === name);
+    recordOnTrip(name, currentPentad, row ? row.rr : 0);   // feeds the running trip
+  } else {
+    seen.delete(name);
+  }
+  saveTicks();
+  renderTable();
+}
+
+// ---------- Data loading ----------
+async function fetchText(url){
+  try{
+    const r = await fetch(url);
+    if(r.ok) return await r.text();
+  }catch(e){ /* fall through to proxy */ }
+  const r2 = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
+  return await r2.text();
+}
+
+function parseCSV(text){
+  const rows = [];
+  let row = [], field = '', inQ = false;
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    if(inQ){
+      if(c === '"'){ if(text[i+1] === '"'){ field += '"'; i++; } else inQ = false; }
+      else field += c;
+    } else if(c === '"'){ inQ = true; }
+    else if(c === ','){ row.push(field); field = ''; }
+    else if(c === '\n' || c === '\r'){
+      if(field !== '' || row.length){ row.push(field); rows.push(row); row = []; field = ''; }
+      if(c === '\r' && text[i+1] === '\n') i++;
+    } else field += c;
+  }
+  if(field !== '' || row.length){ row.push(field); rows.push(row); }
+  return rows.filter(r => r.length > 1);
+}
+
+async function showPentad(){
+  const lat = parseFloat(document.getElementById('lat').value);
+  const lon = parseFloat(document.getElementById('lon').value);
+  if(isNaN(lat) || isNaN(lon)){ setStatus('Enter a valid latitude and longitude, or pick a place from the list.'); return; }
+  await loadForCoords(lat, lon, { fromUser: true });
+}
+
+async function loadPentadCode(){
+  const raw = document.getElementById('pentadcode').value.trim().toUpperCase().replace(/\s+/g,'');
+  const m = raw.match(/^(\d{2})(\d{2})[_-](\d{2})(\d{2})$/);
+  if(!m){ setStatus('Pentad codes look like 3355_2230 — degrees + 5-minute block, with an underscore.'); return; }
+
+  const latDeg = parseInt(m[1],10), latMin = parseInt(m[2],10);
+  const lonDeg = parseInt(m[3],10), lonMin = parseInt(m[4],10);
+  if(latMin % 5 !== 0 || lonMin % 5 !== 0){ setStatus('The minute figures must be multiples of 5 (e.g. 3355_2230, not 3355_2231).'); return; }
+
+  const lat = -(latDeg + (latMin + 2.5)/60);
+  const lon =   lonDeg + (lonMin + 2.5)/60;
+  document.getElementById('lat').value = lat.toFixed(4);
+  document.getElementById('lon').value = lon.toFixed(4);
+  await loadForCoords(lat, lon, { fromUser: true });
+}
+
+async function loadForCoords(lat, lon, opts = {}){
+  if(loading) return;
+  loading = true;
+  try{
+    if(!inSouthAfrica(lat, lon)){
+      setStatus('That location is outside South Africa (' + lat.toFixed(4) + ', ' + lon.toFixed(4) + ') — no pentad loaded.');
+      return;
+    }
+    const pentad = toPentad(lat, lon);
+    if(pentad === currentPentad){
+      if(opts.fromUser) autoAddMyPentad(pentad);
+      setStatus('Already showing pentad ' + pentad + '.');
+      return;
+    }
+    currentPentad = pentad;
+    if(opts.fromUser) autoAddMyPentad(pentad);
+    document.getElementById('pentad').textContent = 'Pentad: ' + pentad;
+    setStatus('Fetching the SABAP2 coverage page…');
+
+    const pageUrl = 'https://sabap2.birdmap.africa/coverage/pentad/' + pentad;
+    const html = await fetchText(pageUrl);
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+
+    const csvLink = [...doc.querySelectorAll('a')].find(a =>
+      /species\s*summary/i.test(a.textContent) && /csv/i.test(a.textContent) ||
+      (a.getAttribute('href') || '').toLowerCase().endsWith('.csv') && /species/i.test(a.textContent)
+    );
+    if(!csvLink){
+      const links = [...doc.querySelectorAll('a')].map(a => a.textContent.trim() + ' -> ' + a.href).join('\n');
+      setStatus('Found the coverage page, but could not spot the species-summary CSV link. Links found:\n\n' + links);
+      return;
+    }
+    const csvUrl = new URL(csvLink.getAttribute('href'), pageUrl).href;
+    setStatus('Downloading species summary CSV…');
+
+    const csv = await fetchText(csvUrl);
+    const table = parseCSV(csv);
+    if(!table.length){ setStatus('The CSV at ' + csvUrl + ' came back empty.'); return; }
+
+    const header = table[0].map(h => h.trim().toLowerCase());
+    const groupCol = header.indexOf('common_group');
+    const specCol  = header.indexOf('common_species');
+    const fpCol    = header.indexOf('fp');
+    if(specCol < 0 || fpCol < 0){
+      setStatus('Unexpected CSV header: ' + header.join(' | ') + '\nPaste this back to me.');
+      return;
+    }
+
+    currentRows = table.slice(1).map(r => {
+      const group = (r[groupCol] || '').trim();
+      const spec  = (r[specCol]  || '').trim();
+      const name = (group && spec && group.toLowerCase() !== spec.toLowerCase())
+        ? group + ' ' + spec
+        : (spec || group);
+      return { name, rr: parseFloat(r[fpCol]) || 0 };
+    }).filter(r => r.name);
+
+    if(!currentRows.length){ setStatus('The CSV had a header but no data rows.'); return; }
+
+    seen = loadTicks(currentPentad);
+    document.getElementById('filters').hidden = false;
+    document.getElementById('colpick').hidden = false;
+    renderTable();   // this also fills missingNotesGlobal for this pentad
+    const unseen = currentRows.filter(r => !seen.has(r.name)).sort((a,b) => b.rr - a.rr);
+    const topTarget = unseen[0];
+    setStatus('Seen ' + seen.size + ' of ' + currentRows.length + ' in this pentad. ' +
+      (topTarget && topTarget.rr >= 50
+        ? 'Top target: ' + topTarget.name + ' (' + topTarget.rr.toFixed(0) + '% of cards record it — look actively!)'
+        : '') +
+      (missingNotesGlobal.length
+        ? '\nNo field notes yet for: ' + missingNotesGlobal.join(', ')
+        : ''), false);
+  }catch(e){
+    setStatus('Could not load SABAP2 data (' + e.message + ').');
+  }finally{
+    loading = false;
+  }
+}
+
+// ---------- GPS ----------
+function gpsLine(msg){
+  document.getElementById('gpsline').textContent = msg;
+}
+
+function startGPS(){
+  if(!navigator.geolocation){
+    gpsLine('Geolocation is not supported by this browser — use the manual inputs.');
+    return;
+  }
+  gpsLine('Requesting location…');
+  document.getElementById('gpsBtn').hidden = true;
+  document.getElementById('gpsStop').hidden = false;
+  gpsWatch = navigator.geolocation.watchPosition(onFix, onGpsError,
+    { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 });
+}
+
+function stopGPS(){
+  if(gpsWatch !== null){
+    navigator.geolocation.clearWatch(gpsWatch);
+    gpsWatch = null;
+  }
+  document.getElementById('gpsBtn').hidden = false;
+  document.getElementById('gpsStop').hidden = true;
+  gpsLine('GPS stopped.');
+}
+
+function onFix(pos){
+  const lat = pos.coords.latitude, lon = pos.coords.longitude;
+  const acc = Math.round(pos.coords.accuracy);
+  gpsLine('Fix: ' + lat.toFixed(4) + ', ' + lon.toFixed(4) + '  (±' + acc + ' m)');
+  document.getElementById('lat').value = lat.toFixed(4);
+  document.getElementById('lon').value = lon.toFixed(4);
+  const pentad = toPentad(lat, lon);
+  if(pentad !== currentPentad){
+    loadForCoords(lat, lon);   // GPS handover: pentad changes, trip list persists
+  }
+}
+
+function onGpsError(err){
+  const msgs = {
+    1: 'Permission denied — allow location access in your browser settings.',
+    2: 'Position unavailable — GPS signal not found (try outdoors).',
+    3: 'Timed out waiting for a GPS fix — still trying…'
+  };
+  gpsLine('GPS: ' + (msgs[err.code] || err.message));
+}
+
+// initialise
+initColumnPicker();
+refreshMyDropdown();
+refreshTripDropdown();
+showTripButtons();
+tripLine();
+</script>
+</body>
+</html>
+html · 1661 lines · Reply 54
